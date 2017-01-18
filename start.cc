@@ -43,7 +43,7 @@ int main()
 		free(e_col);
 		return 0;
 	}
-	for (int l=0; l<10000;l++)
+	for (int l=0; l<1000;l++)
 	{
 
 		n_e_col=collision_part(p,e_col,Np,diameter);//On modifie les tableaux des événements physiques, celui des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envet le plus proche
@@ -53,14 +53,14 @@ int main()
 		printf("%f\t",tau1);
 		tau2=e_mur[n_e_mur].time;
 		printf("%f\n",tau2);
-		if(delta_temp<tau1 && delta_temp<tau2 && tau2>0)//Si la prochaine étape d'animation est plus proche que les 2 autres événements
+		if(delta_temp<tau1 && delta_temp<tau2 && tau1>0)//Si la prochaine étape d'animation est plus proche que les 2 autres événements
 		{
 			update_pos(p,Np,delta_temp);//On met à jour la position de toutes les particules et on affiche
 			gw.draw(p);
 			temps+=delta_temp;
 			delta_temp=delta;
 		}
-		else if(tau1<tau2 && tau2>0) // Si la collision entre particules est plus proche que le rebond sur mur
+		else if(tau1<tau2 && tau1>0) // Si la collision entre particules est plus proche que le rebond sur mur
 		{
 			update_pos(p,Np,tau1);
 			update_vit(e_col,n_e_col,p);//On met à jour la vitesse des 2 particules
