@@ -4,7 +4,7 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 {
 	int i,y,count=0; // on va tester pour chaque particule si elle va croiser une autre
 	int temps=-1, num_t=0; // temps stocke le temps le plus faible et num_t la position correspondant 
-	int tmp; // variable poubelle
+	int tmp=0; // variable poubelle
 	double DVX, DVY, DX, DY, a, b, c, delta; // variable pour calculer le temps de colision
 	double t1, t2;
 
@@ -48,9 +48,9 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 				else if (b<0)
 					(t1<t2)? (tmp=t1) : (tmp=t2);
 				else
-					temps=-1;
+					tmp=-1;
 				e_col[count].time=temps;
-				if (temps>tmp)
+				if (temps>tmp && tmp>0)
 				{
 					temps=tmp;
 					num_t=a;	
