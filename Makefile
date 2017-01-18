@@ -13,6 +13,7 @@ start.o: start.cc Graphics.h
 graphics.o: Graphics.h graphics.cc
 
 
+
 clean:
 	$(RM) *.o hs start
 clobber: clean

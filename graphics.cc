@@ -1,11 +1,5 @@
 //https:www.cairographics.org/manual/cairo-Paths.html
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <time.h>
-#include <unistd.h>
-#include <time.h>
-#include <assert.h>
+
 #include "Graphics.h"
 
 void

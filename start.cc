@@ -31,14 +31,17 @@ void initparticles( Particle *p, int np, double Lmin, double Lmax, double diamet
 	{ // drand48() -- random double numbers uniform on (0 1)
 		p[i].x = Lmin +diameter/2 + (Lmax-Lmin-diameter)*drand48(); //random positions for intial condition
 		p[i].y = Lmin +diameter/2 + (Lmax-Lmin-diameter)*drand48();
-		p[i].vx = 0;// choose random speeds too using drand48();
-		p[i].vy = 0;
+		p[i].vx = 0.001;// choose random speeds too using drand48();
+		p[i].vy = 0.002;
   	}
 }
 
+
+
+
 int main()
 {
-	int Np=2; //Number of particles
+	int i,Np=1; //Number of particles
 	double diameter=1;//particle size
 	int Pix=800; //Number of pixels for window
 	double Lmax=10, Lmin=0; //Physical dimensions of box
@@ -56,8 +59,9 @@ int main()
 	// e[0].time = ...
 	// find the very first collision in the future by looking at e[].time
 	// move particles
-	gw.draw(p);
-  }
+		update_pos(p,Np);
+		gw.draw(p);
+	}
 	free(p);
 	free(e);
   return 0;

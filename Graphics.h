@@ -13,6 +13,11 @@
 
 
 
+
+// Prototypage des fonction
+void udpate_pos(Particle *p, int Np);
+
+
 typedef struct {
   double x,y,vx,vy;
 } Particle; //this is our definition of  a particle, position plus speed
@@ -59,4 +64,3 @@ class Graphics{
   ~Graphics(){cairo_destroy (cr);cairo_surface_destroy (sfc); } //clean up function
 };
 
-void update_pos(Particle *p,int Np);
