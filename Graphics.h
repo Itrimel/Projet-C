@@ -79,5 +79,4 @@ class Graphics{
 void update_pos(Particle *p, int Np,double tau);
 int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax);
 void update_vit(Event *e, int nm_e, Particle *p);
-int collision_part(Particle *p,Event *e_col,int Np,double diameter) ;
-
+int collision_part(Particle *p,Event *e_col,int Np,double diameter);

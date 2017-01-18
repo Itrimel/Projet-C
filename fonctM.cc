@@ -12,7 +12,7 @@ void update_pos(Particle *p,int Np,double tau)
 void update_vit(Event *e, int nm_e, Particle *p)
 //Cette fonction permet de mettre à jour la vitesse d'une particule, en fonction de l'évenement considéré, repéré par e et nm_e
 {
-	int x1,x2,y1,y2,vx1,vy1,vx2,vy2,inter
+	int x1,x2,y1,y2,vx1,vy1,vx2,vy2,inter;
 	switch(e[nm_e].type)
 	{
 		case bottom:// dans le cas du choc contre le mur, il suffit d'inverser la bonne composante
@@ -32,7 +32,7 @@ void update_vit(Event *e, int nm_e, Particle *p)
 			vy1=p[e[nm_e].ia].vy;
 			vx2=p[e[nm_e].ib].vx;
 			vy2=p[e[nm_e].ib].vy;
-			inter=((x2-x1)*(vx1-vx2)+(y2-y1)*(vy1-vy2))/((x2-x1)*(x2-x1)+(y2-y1)(y2-y1));//Et on fait les calculs nécessaires
+			inter=((x2-x1)*(vx1-vx2)+(y2-y1)*(vy1-vy2))/((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));//Et on fait les calculs nécessaires
 			p[e[nm_e].ia].vx=vx1-inter*(x2-x1);
 			p[e[nm_e].ia].vy=vy1-inter*(y2-y1);
 			p[e[nm_e].ib].vx=vx2+inter*(x2-x1);

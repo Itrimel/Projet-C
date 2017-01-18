@@ -44,7 +44,7 @@ int main()
   
 	for (int l=0; l<10000;l++)
 	{
-		n_e_col=collision_part(p,e_col,Np,diameter)  ;//On crée les tableaux des événements physiques, celui des collisions et celui des rebonds
+		n_e_col=collision_part(p,e_col,Np,diameter)  ;//On modifie les tableaux des événements physiques, celui des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envet le plus proche
 		n_e_mur=collision_mur(p,e_mur,Np,diameter,Lmax);
 		tau1=e_col[n_e_col].time;// On récupère les temps des événements physiques
 		tau2=e_mur[n_e_mur].time;
@@ -65,10 +65,10 @@ int main()
 		}
 		else //Le prochain événement est nécessairement un rebond à ce point
 		{
-			update_pos(p,Np,tau1);
+			update_pos(p,Np,tau2);
 			update_vit(e_mur,n_e_mur,p);
-			temps+=tau1;
-			delta_temp-=tau1;/
+			temps+=tau2;
+			delta_temp-=tau2;
 		}
 	}
 	free(p);// On libère les tableaux
