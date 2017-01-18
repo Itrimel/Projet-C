@@ -37,7 +37,7 @@ void update_vit(Event *e, int nm_e, Particle *p)
 			p[e[nm_e].ia].vx=vx1-inter*(x2-x1);
 			p[e[nm_e].ia].vy=vy1-inter*(y2-y1);
 			p[e[nm_e].ib].vx=vx2+inter*(x2-x1);
-			p[e[nm_e].ib].vy=vy1+inter*(y2-y1);
+			p[e[nm_e].ib].vy=vy2+inter*(y2-y1);
 			break;
 					
 	}
