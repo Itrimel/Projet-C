@@ -52,12 +52,12 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 				else
 					tmp=-1;
 				e_col[count].time=tmp;
-				if (temps>tmp && tmp>0)
+				if (temps > tmp && tmp != -1)
 				{
 					temps=tmp;
 					num_t=count;	
 				}
-				printf("b= %f tmp = %f, temps=%f", b, tmp, temps);
+				printf("b= %f tmp = %f, temps=%f \n   -------------------\n", b, tmp, temps);
 			}
 			count++;	
 		}
