@@ -40,9 +40,7 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 				t1=(-b-sqrt(delta))/(2*a);
 				t2=(-b+sqrt(delta))/(2*a);
 				/*
-				if(t2>0)
-					tmp=t2;
-				else if(t1>0)
+				if(t1>0)
 					tmp=t1;
 				else 
 					tmp=10e42;
