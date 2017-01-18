@@ -12,7 +12,7 @@ void update_pos(Particle *p,int Np,double tau)
 void update_vit(Event *e, int nm_e, Particle *p)
 //Cette fonction permet de mettre à jour la vitesse d'une particule, en fonction de l'évenement considéré, repéré par e et nm_e
 {
-	int x1,x2,y1,y2,vx1,vy1,vx2,vy2,inter;
+	double x1,x2,y1,y2,vx1,vy1,vx2,vy2,inter;
 	switch(e[nm_e].type)
 	{
 		case bottom:// dans le cas du choc contre le mur, il suffit d'inverser la bonne composante
@@ -33,6 +33,7 @@ void update_vit(Event *e, int nm_e, Particle *p)
 			vx2=p[e[nm_e].ib].vx;
 			vy2=p[e[nm_e].ib].vy;
 			inter=((x2-x1)*(vx1-vx2)+(y2-y1)*(vy1-vy2))/((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));//Et on fait les calculs nécessaires
+			printf("inter = %f\n",inter);
 			p[e[nm_e].ia].vx=vx1-inter*(x2-x1);
 			p[e[nm_e].ia].vy=vy1-inter*(y2-y1);
 			p[e[nm_e].ib].vx=vx2+inter*(x2-x1);
@@ -49,6 +50,7 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 	double time1,time2,time_min,vx,vy;
 	for(i=0;i<Np;i++)
 	{
+		e[i].time=-1;
 		cas=0;/* On regarde dans quelle direction la particule se déplace : 00 signifie vers bas gauche, 01 signifie
 		vers bas droite, 10 vers haut gauche, 11 vers haut droite */
 		vx=p[i].vx;
@@ -63,13 +65,13 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 			case 0:
 				time1=-(p[i].y-diameter/2)/vy;//Choc avec le mur du bas. Le signe moins est présent, car la vitesse est négative
 				time2=-(p[i].x-diameter/2)/vx;//choc avec le mur de gauche
-				if(time1<time2)
+				if(time1<time2 && time1>0)
 				{
 					e[i].time=time1;
 					e[i].ia=i;
 					e[i].type=bottom;
 				}
-				else
+				else if(time2>0 && time1>0)
 				{
 					e[i].time=time2;
 					e[i].ia=i;
@@ -79,13 +81,13 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 			case 1:
 				time1=-(p[i].y-diameter/2)/vy;
 				time2=(Lmax-p[i].x-diameter/2)/vx;//choc avec le mur de droite
-				if(time1<time2)
+				if(time1<time2 && time1>0)
 				{
 					e[i].time=time1;
 					e[i].ia=i;
 					e[i].type=bottom;
 				}
-				else
+				else if(time2>0)
 				{
 					e[i].time=time2;
 					e[i].ia=i;
@@ -95,13 +97,13 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 			case 10:
 				time1=(Lmax-p[i].y-diameter/2)/vy;//choc avec le mur du haut
 				time2=-(p[i].x-diameter/2)/vx;
-				if(time1<time2)
+				if(time1<time2 && time1>0)
 				{
 					e[i].time=time1;
 					e[i].ia=i;
 					e[i].type=top;
 				}
-				else
+				else if(time2>0)
 				{
 					e[i].time=time2;
 					e[i].ia=i;
@@ -111,13 +113,13 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 			case 11:
 				time1=(Lmax-p[i].y-diameter/2)/vy;
 				time2=(Lmax-p[i].x-diameter/2)/vx;
-				if(time1<time2)
+				if(time1<time2 && time1>0)
 				{
 					e[i].time=time1;
 					e[i].ia=i;
 					e[i].type=top;
 				}
-				else
+				else if(time2>0)
 				{
 					e[i].time=time2;
 					e[i].ia=i;
