@@ -7,6 +7,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+// Prototypage des fonction
+void udpate_pos(Particle *p, int Np);
+
 typedef struct {
   double x,y,vx,vy;
 } Particle; //this is our definition of  a particle, position plus speed
