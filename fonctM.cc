@@ -57,11 +57,12 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 			cas++;
 		if(vy>0)
 			cas+=10;
-		switch(cas)// Pour chaque cas, on regarde lequel des 2 murs la particule rencontre en premier, et on attribue alors le bon évenement et le bon temps
+		switch(cas)/* Pour chaque cas, on regarde lequel des 2 murs la particule rencontre en premier, 
+							et on attribue alors le bon évenement et le bon temps*/
 		{
 			case 0:
-				time1=-(p[i].y-diameter/2)/vy;
-				time2=-(p[i].x-diameter/2)/vx;
+				time1=-(p[i].y-diameter/2)/vy;//Choc avec le mur du bas. Le signe moins est présent, car la vitesse est négative
+				time2=-(p[i].x-diameter/2)/vx;//choc avec le mur de gauche
 				if(time1<time2)
 				{
 					e[i].time=time1;
@@ -77,7 +78,7 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				break;
 			case 1:
 				time1=-(p[i].y-diameter/2)/vy;
-				time2=(Lmax-p[i].x-diameter/2)/vx;
+				time2=(Lmax-p[i].x-diameter/2)/vx;//choc avec le mur de droite
 				if(time1<time2)
 				{
 					e[i].time=time1;
@@ -92,7 +93,7 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				break;
 			case 10:
-				time1=(Lmax-p[i].y-diameter/2)/vy;
+				time1=(Lmax-p[i].y-diameter/2)/vy;//choc avec le mur du haut
 				time2=-(p[i].x-diameter/2)/vx;
 				if(time1<time2)
 				{
@@ -124,18 +125,19 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				break;
 			}
-		if(i==0)// Au début de la boucle
+		if(i==0)/* Au début de la boucle for , on doit initialiser le temps minimum à la première valeur, 
+																						afin de ne pas avoir de problèmes*/
 		{
 			e_min=0;
 			time_min=e[0].time;
 		}
-		else if(e[i].time<time_min)
+		else if(e[i].time<time_min)// Si le rebond considéré arrive plus vite que le minimum précédent, on change le minimum
 		{
 			e_min=i;
 			time_min=e[i].time;
 		}
 	}
-	return e_min;
+	return e_min;// On retourne l'emplacement dans le tableau de l'événement arrivant le plus vite
 }
 		
 		
