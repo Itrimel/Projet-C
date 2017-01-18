@@ -17,45 +17,63 @@ void initparticles( Particle *p, int np, double Lmin, double Lmax, double diamet
 
 int main()
 {
-	int i,Np=4,n_e_mur; //Number of particles
+	int i,Np=4,n_e_mur,n_e_col; //Number of particles
 	double diameter=1;//particle size
 	int Pix=800; //Number of pixels for window
-	double Lmax=10, Lmin=0,temps=0,tau,temps_mur,delta=0.1,delta_temp; //Physical dimensions of box
+	double Lmax=10, Lmin=0,temps=0,tau1,tau2,temps_mur,delta=0.1,delta_temp=delta; //Physical dimensions of box
 	
 	Graphics gw(Np,Pix, Lmin ,Lmax,diameter);// Open a window to plot particles in
 	srand48(time(NULL));//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
   
 	Particle *p= (Particle *) malloc( Np *sizeof( Particle)); //an array of particles
 	initparticles(p,Np,Lmin, Lmax,diameter); //place particles in box
-	Event *e_mur = (Event *) malloc( Np* sizeof(Event) ); // Np possible collisions with walls
+	Event *e_mur = (Event *) malloc( Np* sizeof(Event) );
+	/*Ce tableau contiendra les événements collision avec mur, qui sont au nombre de Np, 
+	car ils sont sélectionnés pour chaque particule afin de n'avoir que le suivant dans le temps*/
+	Event *e_col = (Event *) malloc( Np*Np*sizeof(Event));
+	/*Ce tableau contiendra les événements collision entre particules, qui sont au nombre de Np(Np-1)/2
+	On prend un peu plus par sécurité*/
+	if(e_mur==NULL || e_col==NULL || p ==NULL)//Sécurité
+	{
+		printf("Allocation mémoire échouée. Fin du programme");
+		free(p);
+		free(e_mur);
+		free(e_col);
+		return 0;
+	}
   
-  	delta_temp=delta;
 	for (int l=0; l<10000;l++)
-	{//long loop
-	//find future collision using exact calculations of collision times
-	// e[0].type=right;
-	// e[0].time = ...
-	// find the very first collision in the future by looking at e[].time
-	// move particles
+	{
+		n_e_col=collision_part(p,e_col,Np,diameter)  ;//On crée les tableaux des événements physiques, celui des collisions et celui des rebonds
 		n_e_mur=collision_mur(p,e_mur,Np,diameter,Lmax);
-		tau=e_mur[n_e_mur].time;
-		if(delta_temp<tau)
+		tau1=e_col[n_e_col].time;// On récupère les temps des événements physiques
+		tau2=e_mur[n_e_mur].time;
+		if(delta_temp<tau1 && delta_temp<tau2)//Si la prochaine étape d'animation est plus proche que les 2 autres événements
 		{
-			update_pos(p,Np,delta_temp);
+			update_pos(p,Np,delta_temp);//On met à jour la position de toutes les particules et on affiche
 			gw.draw(p);
 			temps+=delta_temp;
 			delta_temp=delta;
 		}
-		else
+		else if(tau1<tau2) // Si la collision entre particules est plus proche que le rebond sur mur
 		{
-			update_pos(p,Np,tau);
+			update_pos(p,Np,tau1);
+			update_vit(e_col,n_e_col,p);//On met à jour la vitesse des 2 particules
+			temps+=tau1;
+			delta_temp-=tau1;/* On diminue le temps jusqu'à la prochaine animation de tau1. 
+			A la prochaine boucle, les temps des événements physiques seront donc comparés à delta - tau*/
+		}
+		else //Le prochain événement est nécessairement un rebond à ce point
+		{
+			update_pos(p,Np,tau1);
 			update_vit(e_mur,n_e_mur,p);
-			temps+=tau;
-			delta_temp-=tau;
+			temps+=tau1;
+			delta_temp-=tau1;/
 		}
 	}
-	free(p);
+	free(p);// On libère les tableaux
 	free(e_mur);
+	free(e_col);
   return 0;
 }
 
