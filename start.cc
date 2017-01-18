@@ -1,28 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <time.h>
-#include <unistd.h>
-#include <assert.h>
-
 #include "Graphics.h"  // Contains the definition of "Particule" and "Graphics"
-
-enum  col_type
-{
- 	bottom,
- 	right,
-	top,
-  	left,
-	animation,
-	particle
-}; //different types of collision
-
-typedef struct
-{ // a structure describing each collision -- one might want an array of Events
-	enum col_type type;
-	int ia,ib;
- 	double time;
-} Event;
 
 void initparticles( Particle *p, int np, double Lmin, double Lmax, double diameter)
 {
@@ -31,8 +7,8 @@ void initparticles( Particle *p, int np, double Lmin, double Lmax, double diamet
 	{ // drand48() -- random double numbers uniform on (0 1)
 		p[i].x = Lmin +diameter/2 + (Lmax-Lmin-diameter)*drand48(); //random positions for intial condition
 		p[i].y = Lmin +diameter/2 + (Lmax-Lmin-diameter)*drand48();
-		p[i].vx = 0.001;// choose random speeds too using drand48();
-		p[i].vy = 0.002;
+		p[i].vx = drand48();// choose random speeds too using drand48();
+		p[i].vy = drand48();
   	}
 }
 
@@ -41,17 +17,19 @@ void initparticles( Particle *p, int np, double Lmin, double Lmax, double diamet
 
 int main()
 {
-	int i,Np=1; //Number of particles
+	int i,Np=4,n_e_mur; //Number of particles
 	double diameter=1;//particle size
 	int Pix=800; //Number of pixels for window
-	double Lmax=10, Lmin=0; //Physical dimensions of box
+	double Lmax=10, Lmin=0,temps=0,tau,temps_mur,delta=0.1,delta_temp; //Physical dimensions of box
+	
 	Graphics gw(Np,Pix, Lmin ,Lmax,diameter);// Open a window to plot particles in
-	srand48(1);//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
+	srand48(time(NULL));//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
   
 	Particle *p= (Particle *) malloc( Np *sizeof( Particle)); //an array of particles
 	initparticles(p,Np,Lmin, Lmax,diameter); //place particles in box
-	Event *e = (Event *) malloc( 4*Np* sizeof(Event) ); // 4 Np possible collisions with walls
+	Event *e_mur = (Event *) malloc( Np* sizeof(Event) ); // Np possible collisions with walls
   
+  	delta_temp=delta;
 	for (int l=0; l<10000;l++)
 	{//long loop
 	//find future collision using exact calculations of collision times
@@ -59,11 +37,25 @@ int main()
 	// e[0].time = ...
 	// find the very first collision in the future by looking at e[].time
 	// move particles
-		update_pos(p,Np);
-		gw.draw(p);
+		n_e_mur=collision_mur(p,e_mur,Np,diameter,Lmax);
+		tau=e_mur[n_e_mur].time;
+		if(delta_temp<tau)
+		{
+			update_pos(p,Np,delta_temp);
+			gw.draw(p);
+			temps+=delta_temp;
+			delta_temp=delta;
+		}
+		else
+		{
+			update_pos(p,Np,tau);
+			update_vit(e_mur,n_e_mur,p);
+			temps+=tau;
+			delta_temp-=tau;
+		}
 	}
 	free(p);
-	free(e);
+	free(e_mur);
   return 0;
 }
 

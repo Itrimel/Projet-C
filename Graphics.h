@@ -12,16 +12,26 @@
 #include <time.h>
 
 
-
-
-// Prototypage des fonction
-void udpate_pos(Particle *p, int Np);
-
-
 typedef struct {
   double x,y,vx,vy;
 } Particle; //this is our definition of  a particle, position plus speed
 
+enum  col_type
+{
+ 	bottom,
+ 	right,
+	top,
+  	left,
+	animation,
+	particle
+}; //different types of collision
+
+typedef struct
+{ // a structure describing each collision -- one might want an array of Events
+	enum col_type type;
+	int ia,ib;//ia numéro particule concernée, ib numéro particule rencontrée
+ 	double time;
+} Event;
 
 class Graphics{
  private:
@@ -63,4 +73,10 @@ class Graphics{
   void frame(double , double , double , double );//draw a square
   ~Graphics(){cairo_destroy (cr);cairo_surface_destroy (sfc); } //clean up function
 };
+
+
+// Prototypage des fonction
+void update_pos(Particle *p, int Np,double tau);
+int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax);
+void update_vit(Event *e, int nm_e, Particle *p);
 

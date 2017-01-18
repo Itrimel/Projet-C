@@ -4,14 +4,14 @@ CXXFLAGS= -O -g -Wextra -Wall -Wshadow   -fsanitize=address -Wno-unused-variable
 
 all: start
 
-start:start.o graphics.o Graphics.h
-	$(CXX) $(CXXFLAGS) graphics.o start.o -o $@  -L/opt/local/lib -lcairo  -L/opt/X11/lib  -lX11 -lm 
+start:start.o graphics.o Graphics.h fonctM.o
+	$(CXX) $(CXXFLAGS) graphics.o start.o fonctM.o -o $@  -L/opt/local/lib -lcairo  -L/opt/X11/lib  -lX11 -lm 
 
 
 hs.o: hs.cc Graphics.h
 start.o: start.cc Graphics.h
 graphics.o: Graphics.h graphics.cc
-
+fonctM.o : fonctM.cc Graphics.h
 
 
 clean:
@@ -29,6 +29,10 @@ tar:
 
 hs:hs.o graphics.o Graphics.h
 	$(CXX) $(CXXFLAGS) graphics.o hs.o -o $@  -L/opt/local/lib -lcairo  -L/opt/X11/lib  -lX11 -lm 
+	
+
+  
+	
 hstar:
 	mkdir Attract
 	cp Makefile *.cc *.h Attract
