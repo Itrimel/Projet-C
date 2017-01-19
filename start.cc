@@ -19,10 +19,10 @@ int main()
 {
 
 
-	int i,Np=300,n_e_mur,n_e_col; //Number of particles
-	double diameter=0.1;//particle size
-	int Pix=800; //Number of pixels for window
-	double Lmax=10, Lmin=0,temps=0,tau1,tau2,temps_mur,delta=0.3,delta_temp=delta; //Physical dimensions of box
+	int i,Np=8000,n_e_mur,n_e_col; //Number of particles
+	double diameter=0.08;//particle size
+	int Pix=1000; //Number of pixels for window
+	double Lmax=20, Lmin=0,temps=0,tau1,tau2,temps_mur,delta=0.3,delta_temp=delta; //Physical dimensions of box
 
 	Graphics gw(Np,Pix, Lmin ,Lmax,diameter);// Open a window to plot particles in
 	srand48(time(NULL));//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
@@ -63,7 +63,7 @@ int main()
 		else if(tau1<tau2) // Si la collision entre particules est plus proche que le rebond sur mur
 		{
 			update_pos(p,Np,tau1);
-			update_vit(e_col,n_e_col,p);//On met à jour la vitesse des 2 particules
+			update_vit(e_col,n_e_col,p,Lmax);//On met à jour la vitesse des 2 particules
 			temps+=tau1;
 			delta_temp-=tau1;/* On diminue le temps jusqu'à la prochaine animation de tau1. 
 			A la prochaine boucle, les temps des événements physiques seront donc comparés à delta - tau*/
@@ -71,7 +71,7 @@ int main()
 		else //Le prochain événement est nécessairement un rebond à ce point
 		{
 			update_pos(p,Np,tau2);
-			update_vit(e_mur,n_e_mur,p);
+			update_vit(e_mur,n_e_mur,p,Lmax);
 			temps+=tau2;
 			delta_temp-=tau2;
 		}
