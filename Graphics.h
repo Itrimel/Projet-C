@@ -22,7 +22,7 @@ enum  col_type
  	right,
 	top,
   	left,
-	animation,
+	//animation,
 	particle
 }; //different types of collision
 
@@ -78,5 +78,5 @@ class Graphics{
 // Prototypage des fonction
 void update_pos(Particle *p, int Np,double tau);
 int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax);
-void update_vit(Event *e, int nm_e, Particle *p);
+double update_vit(Event *e, int nm_e, Particle *p);
 int collision_part(Particle *p,Event *e_col,int Np,double diameter);
