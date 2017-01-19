@@ -7,8 +7,8 @@ void initparticles( Particle *p, int np, double Lmin, double Lmax, double diamet
 	{ // drand48() -- random double numbers uniform on (0 1)
 		p[i].x = Lmin +diameter/2 + (Lmax-Lmin-diameter)*drand48(); //random positions for intial condition
 		p[i].y = Lmin +diameter/2 + (Lmax-Lmin-diameter)*drand48();
-		p[i].vx = drand48();// choose random speeds too using drand48();
-		p[i].vy = drand48();
+		p[i].vx = 2*drand48()-1;// choose random speeds too using drand48();
+		p[i].vy = 2*drand48()-1;
   	}
 }
 
@@ -19,7 +19,7 @@ int main()
 {
 
 
-	int i,Np=100,n_e_mur,n_e_col; //Number of particles
+	int i,Np=300,n_e_mur,n_e_col; //Number of particles
 	double diameter=0.1;//particle size
 	int Pix=800; //Number of pixels for window
 	double Lmax=10, Lmin=0,temps=0,tau1,tau2,temps_mur,delta=0.3,delta_temp=delta; //Physical dimensions of box
@@ -43,7 +43,8 @@ int main()
 		free(e_col);
 		return 0;
 	}
-	for (int l=0; l<10000;l++)
+	//for (int l=0; l<10000;l++)
+	while(1)
 	{
 
 		n_e_col=collision_part(p,e_col,Np,diameter);//On modifie les tableaux des événements physiques, celui des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envet le plus proche
