@@ -4,7 +4,7 @@
 
 void
 Graphics::draw(Particle *p){
-  
+  double v;  
   const int FPS=50;//frames per second
   struct timespec tm={0,1000000000/FPS}; //Sleep in nanoseconds between frames
   nanosleep( &tm , NULL);
@@ -20,12 +20,13 @@ Graphics::draw(Particle *p){
 
   cairo_set_source_rgb(cr, 0.69, 0.19, 0);//dark red for particles
   for(int i=0;i<Np;i++){// place the particles in the graphics buffer, without drawing
+  	v=(double)i/Np;
     cairo_new_sub_path(cr) ;
     cairo_arc(cr,  alpha + gamma* (p[i].x -lmin) ,  alpha + gamma*(p[i].y - lmin), alpha, 0, 2 * M_PI);
   }
   cairo_fill(cr);//draw all particles with solid color
 
-  /*  cairo_set_source_rgb(cr, 0, 0.19, 0.69);//dark blue for particles
+  /*cairo_set_source_rgb(cr, 0, 0.19, 0.69);//dark blue for particles
   for(int i=0;i<Np;i++){
     cairo_new_sub_path(cr) ;
     cairo_arc(cr,  alpha + gamma* (p[i].x -lmin) ,  alpha + gamma*(p[i].y - lmin), 1.4*alpha, 0, 2 * M_PI);

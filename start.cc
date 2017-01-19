@@ -19,10 +19,10 @@ int main()
 {
 
 
-	int i,Np=4,n_e_mur,n_e_col; //Number of particles
-	double diameter=1;//particle size
+	int i,Np=100,n_e_mur,n_e_col; //Number of particles
+	double diameter=0.1;//particle size
 	int Pix=800; //Number of pixels for window
-	double Lmax=10, Lmin=0,temps=0,tau1,tau2,temps_mur,delta=0.2,delta_temp=delta; //Physical dimensions of box
+	double Lmax=10, Lmin=0,temps=0,tau1,tau2,temps_mur,delta=0.3,delta_temp=delta; //Physical dimensions of box
 
 	Graphics gw(Np,Pix, Lmin ,Lmax,diameter);// Open a window to plot particles in
 	srand48(time(NULL));//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
@@ -49,11 +49,9 @@ int main()
 		n_e_col=collision_part(p,e_col,Np,diameter);//On modifie les tableaux des événements physiques, celui des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envet le plus proche
 		n_e_mur=collision_mur(p,e_mur,Np,diameter,Lmax);
 		tau1=e_col[n_e_col].time;// On récupère les temps des événements physiques
-		printf("%f\t",tau1);
+		//printf("%f\t",tau1);
 		tau2=e_mur[n_e_mur].time;
-		printf("%f\n",tau2);
-		if(tau1==-1)
-			tau1=10e42;
+		//printf("%f\n",tau2);
 		if(delta_temp<tau2 && delta_temp<tau1)//Si la prochaine étape d'animation est plus proche que les 2 autres événements
 		{
 			update_pos(p,Np,delta_temp);//On met à jour la position de toutes les particules et on affiche

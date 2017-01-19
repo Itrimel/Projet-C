@@ -20,7 +20,7 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 			DY=p[i].y-p[y].y;
 			
 			a=(DVX*DVX+DVY*DVY);
-			b=(DVX*DX+DVY*DY);
+			b=2*(DVX*DX+DVY*DY);
 			c=(DX*DX+DY*DY-diameter*diameter);
 			
 			delta=b*b-4*a*c;
@@ -29,7 +29,7 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 				e_col[count].type=particle;
 				e_col[count].ia=i;
 				e_col[count].ib=y;
-				e_col[count].time=-1;		
+				e_col[count].time=10e42;		
 			}
 			else 
 			{
@@ -38,25 +38,15 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 				e_col[count].ib=y;
 				
 				t1=(-b-sqrt(delta))/(2*a);
-				t2=(-b+sqrt(delta))/(2*a);
-				/*
+				//t2=(-b+sqrt(delta))/(2*a);
+				
 				if(t1>0)
 					tmp=t1;
 				else 
 					tmp=10e42;
-				*/
-				if (t1<0 && t2<0)
-					tmp=-1;
-				else if(t1>=0 && t2<=0 && b<0) // b est négative quand les boulle s'approche l'une de l'autre, correspond au produit scalaire de DV(x,y)  et DP(x,y)
-					tmp=t1;
-				else if(t1<0 && t2>=0 && b<0)
-					tmp=t2;
-				else if (b<0)
-					((t1<t2)? (tmp=t1) : (tmp=t2));
-				else
-					tmp=-1;
+				
 				e_col[count].time=tmp;
-				if (temps > tmp && tmp != -1)
+				if (temps > tmp)
 				{
 					temps=tmp;
 					num_t=count;	

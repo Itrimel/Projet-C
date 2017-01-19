@@ -33,7 +33,7 @@ void update_vit(Event *e, int nm_e, Particle *p)
 			vx2=p[e[nm_e].ib].vx;
 			vy2=p[e[nm_e].ib].vy;
 			inter=((x2-x1)*(vx1-vx2)+(y2-y1)*(vy1-vy2))/((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));//Et on fait les calculs nécessaires
-			printf("inter = %f\n",inter);
+			//printf("inter = %f\n",inter);
 			p[e[nm_e].ia].vx=vx1-inter*(x2-x1);
 			p[e[nm_e].ia].vy=vy1-inter*(y2-y1);
 			p[e[nm_e].ib].vx=vx2+inter*(x2-x1);
