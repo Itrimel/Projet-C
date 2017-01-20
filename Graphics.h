@@ -69,7 +69,6 @@ class Graphics{
     printf("Don't pass graphics objects: use a pointer  %p \n" , &g); exit(2);
   }
   
-  
   void draw(Particle*);//draw the particles
   void frame(double , double , double , double);//draw a square or stadium
   ~Graphics(){cairo_destroy (cr);cairo_surface_destroy (sfc); } //clean up function

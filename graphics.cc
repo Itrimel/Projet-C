@@ -32,6 +32,7 @@ Graphics::draw(Particle *p){
     cairo_arc(cr,  alpha + gamma* (p[i].x -lmin) ,  alpha + gamma*(p[i].y - lmin), 1.4*alpha, 0, 2 * M_PI);
   }
   cairo_stroke (cr); // hollow particles*/
+  
 
   frame(alpha, 2*Dim-alpha, alpha/2, Dim-alpha/2);//draw square border or stadium border
   cairo_pop_group_to_source(cr); //finished drawing operations for this set of positions
