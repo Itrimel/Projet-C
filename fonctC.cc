@@ -8,11 +8,11 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 	double temps=10E42;
 	double DVX, DVY, DX, DY, a, b, c, delta; // variable pour calculer le temps de colision
 	double t1, t2;
-	
+
 	if(Np==1)
 	{
 		e_col[0].time=10e42;
-		return(0);
+		return 0;
 	}
 	for(i=0; i < Np; i++)
 	{
@@ -61,7 +61,6 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 	}
 	return (num_t);
 }
-
 
 double temperature(Particle *p, int Nb, double m)
 {
@@ -133,3 +132,4 @@ double* allocdouble(int Np) // cette fonction crée un tableau de Nb double init
 	return(pouet);
 
 }
+
