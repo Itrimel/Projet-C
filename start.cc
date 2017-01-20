@@ -74,7 +74,6 @@ int main()
 			//gw.draw(p);
 			temps+=delta_temp;
 			delta_temp=delta;
-<<<<<<< HEAD
 			//T=T+temperature(p, Np, m);
 			//P = V/(2*m*delta); // la pression est donné par P=V_perp.
 			if(l%30==0)
