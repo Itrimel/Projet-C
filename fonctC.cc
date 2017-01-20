@@ -8,6 +8,7 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 	double temps=10E42;
 	double DVX, DVY, DX, DY, a, b, c, delta; // variable pour calculer le temps de colision
 	double t1, t2;
+
 	if(Np==1)
 	{
 		e_col[0].time=10e42;
@@ -111,7 +112,7 @@ void creathist(Particle *p, int Np, double* normeV, double* compoVx, double* com
 			fprintf(norme, "%f\n", normeV[j]/count);
 			fprintf(vx, "%f\n", compoVx[j]/count);
 			fprintf(vy, "%f\n", compoVy[j]/count);
-	}
+		}
 		fclose(norme);
 		fclose(vx);
 		fclose(vy);
@@ -131,5 +132,4 @@ double* allocdouble(int Np) // cette fonction crée un tableau de Nb double init
 	return(pouet);
 
 }
-
 

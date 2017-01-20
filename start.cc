@@ -12,9 +12,6 @@ void initparticles( Particle *p, int np, double Lmin, double Lmax, double diamet
   	}
 }
 
-
-
-
 int main()
 {
 	system("rm HISTO/*.dat"); // on suprime les fichers précédament crée
@@ -40,6 +37,7 @@ int main()
 
 	int l=0; // l gère le nombre de pas temporel que l'on fait
 
+
 	//printf("Pression\tTemperature !\n");
 	
 	FILE *fp=NULL;
@@ -60,23 +58,23 @@ int main()
 		free(e_col);
 		return 0;
 	}
+
 	while(l<10000)
 	{
 
 		n_e_col=collision_part(p,e_col,Np,diameter);//On modifie les tableaux des événements physiques, celui des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envet le plus proche
 		n_e_mur=collision_mur(p,e_mur,Np,diameter,Lmax);
 		tau1=e_col[n_e_col].time;// On récupère les temps des événements physiques
-		//printf("%f\t",tau1);
 		tau2=e_mur[n_e_mur].time;
-		//printf("%f\n",tau2);
+		
 		if(delta_temp<tau2 && delta_temp<tau1)//Si la prochaine étape d'animation est plus proche que les 2 autres événements
 		{
-			printf("%d\n", l);
 			GO=0;
 			update_pos(p,Np,delta_temp);//On met à jour la position de toutes les particules et on affiche
 			//gw.draw(p);
 			temps+=delta_temp;
 			delta_temp=delta;
+<<<<<<< HEAD
 			//T=T+temperature(p, Np, m);
 			//P = V/(2*m*delta); // la pression est donné par P=V_perp.
 			if(l%30==0)
@@ -117,7 +115,3 @@ int main()
 	free(e_col);
   return 0;
 }
-
-
-
-
