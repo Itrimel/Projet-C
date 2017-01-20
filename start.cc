@@ -35,7 +35,7 @@ int main()
 	double *compoVy=allocdouble(Np);
 	int GO;
 
-	int l=0; // l gère le nombre de pas temporel que l'on fait
+	int l=0, eq=0; // l gère le nombre de pas temporel que l'on fait
 
 	printf("Pression\tTemperature !\n");
 	Particle *p= (Particle *) malloc( Np *sizeof( Particle)); //an array of particles
@@ -71,22 +71,23 @@ int main()
 			temps+=delta_temp;
 			delta_temp=delta;
 			T=T+temperature(p, Np, m);
-			P = V/(Np*2*m*delta); // la pression est donné par P=V_perp.
-			if(l%10==0) // on afficher pression et température moyenner sur 10 delta t
-				printf("%f\t%f\n", V, T);
-			//printf("GO= %d, l=%d\n", GO, l);
-			if(l==999) // on sauvegarde les données;
-				GO=1;
-			//if() // on se place à l'équilibre thermo
-			
-			//creathist(p, Np, normeV, compoVx, compoVy, GO);
-			if (l%10 == 1) // on remet les valeurs à zero 
+			P = V/(2*m*delta); // la pression est donné par P=V_perp.
+			if(eq>Np) // on se place à l'équilibre thermo
 			{
-				P=0;
-				T=0;
+				if(l%10==0) // on afficher pression et température moyenner sur 10 delta t
+				{
+					printf("%f\t%f\n", V, T);
+					P=0;
+					T=0;
+					V=0; // on reset la valeur de vitesse
+				}
+				//printf("GO= %d, l=%d\n", GO, l);
+				if(l==999) // on sauvegarde les données;
+					GO=1;
+				creathist(p, Np, normeV, compoVx, compoVy, GO);
+
 			}
-			V=0; // on reset la valeur de vitesse
-			l++;
+				l++;
 		}	
 		else if(tau1<tau2) // Si la collision entre particules est plus proche que le rebond sur mur
 		{
@@ -95,6 +96,7 @@ int main()
 			temps+=tau1;
 			delta_temp-=tau1;/* On diminue le temps jusqu'à la prochaine animation de tau1. 
 			A la prochaine boucle, les temps des événements physiques seront donc comparés à delta - tau*/
+			eq++;
 		}
 		else //Le prochain événement est nécessairement un rebond à ce point
 		{
