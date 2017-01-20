@@ -109,7 +109,3 @@ int main()
 	free(e_col);
   return 0;
 }
-
-
-
-
