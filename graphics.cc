@@ -18,7 +18,7 @@ Graphics::draw(Particle *p){
   cairo_set_source_rgb(cr, 0.0, 0.19, 0);//dark green background
   cairo_paint (cr); //clear screen with green
 
-  cairo_set_source_rgb(cr, 0.69, 0.19, 0);//dark red for particles
+  cairo_set_source_rgb(cr, 0.5, 0.5, 1);//dark red for particles
   for(int i=0;i<Np;i++){// place the particles in the graphics buffer, without drawing
   	v=(double)i/Np;
     cairo_new_sub_path(cr) ;
