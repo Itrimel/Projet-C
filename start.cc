@@ -61,7 +61,6 @@ int main()
 
 	while(l<10000)
 	{
-
 		n_e_col=collision_part(p,e_col,Np,diameter);//On modifie les tableaux des événements physiques, celui des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envet le plus proche
 		n_e_mur=collision_mur(p,e_mur,Np,diameter,Lmax);
 		tau1=e_col[n_e_col].time;// On récupère les temps des événements physiques
