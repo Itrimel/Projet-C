@@ -20,6 +20,7 @@ double update_vit(Event *e, int nm_e, Particle *p, double Lmax)
 			p[nm_e].vy*=-1;
 			return p[nm_e].vy*p[nm_e].vy;
 		case left:
+		if(STADE){
 			x=p[nm_e].x;
 			y=p[nm_e].y;
 			vx=p[nm_e].vx;
@@ -30,8 +31,9 @@ double update_vit(Event *e, int nm_e, Particle *p, double Lmax)
 			a=-a;
 			p[nm_e].vx=a*x-b*(y-Lmax/2);
 			p[nm_e].vy=a*(y-Lmax/2)+b*x;
-			return a*a;			
+			return a*a;}
 		case right:
+		if(STADE){
 			x=p[nm_e].x-Lmax;
 			y=p[nm_e].y;
 			vx=p[nm_e].vx;
@@ -42,7 +44,11 @@ double update_vit(Event *e, int nm_e, Particle *p, double Lmax)
 			a=-a;
 			p[nm_e].vx=a*x-b*(y-Lmax/2);
 			p[nm_e].vy=a*(y-Lmax/2)+b*x;
-			return a*a;
+			return a*a;}
+			else {
+			p[nm_e].vx*=-1;
+			return p[nm_e].vx*p[nm_e].vx;
+			}
 		case particle:// Pour le choc entre 2 particules, l'évolution est moins évidente
 			x1=p[e[nm_e].ia].x; // On récupère toute les valeurs utiles
 			y1=p[e[nm_e].ia].y;
@@ -95,7 +101,10 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				else
 				{
-					e[i].time=cercle(p[i],Lmax,diameter,4);
+					if(STADE)
+						e[i].time=cercle(p[i],Lmax,diameter,4);
+					else
+						e[i].time=time2;
 					e[i].ia=i;
 					e[i].type=left;
 				}
@@ -111,7 +120,10 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				else
 				{
-					e[i].time=cercle(p[i],Lmax,diameter,3);
+					if(STADE)
+						e[i].time=cercle(p[i],Lmax,diameter,3);
+					else
+						e[i].time=time2;
 					e[i].ia=i;
 					e[i].type=right;
 				}
@@ -127,7 +139,10 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				else
 				{
-					e[i].time=cercle(p[i],Lmax,diameter,4);
+					if(STADE)
+						e[i].time=cercle(p[i],Lmax,diameter,4);
+					else
+						e[i].time=time2;
 					e[i].ia=i;
 					e[i].type=left;
 				}
@@ -143,7 +158,10 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				else
 				{
-					e[i].time=cercle(p[i],Lmax,diameter,3);
+					if(STADE)
+						e[i].time=cercle(p[i],Lmax,diameter,3);
+					else
+						e[i].time=time2;
 					e[i].ia=i;
 					e[i].type=right;
 				}

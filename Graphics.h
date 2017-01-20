@@ -11,6 +11,15 @@
 #include <math.h>
 #include <time.h>
 
+#define STADIUM // mettre STADE pour le stade et NORMAL pour un boite carré
+
+#ifdef NORMAL
+const int STADE=0;
+#endif
+
+#ifdef STADIUM
+const int STADE=1;
+#endif
 
 typedef struct {
   double x,y,vx,vy;
@@ -36,7 +45,7 @@ typedef struct
 class Graphics{
  private:
   int Np;
-  double /*lmin, lmax,*/Dim,diam;
+  double Dim,diam;
   double *lmin, *lmax;
   cairo_surface_t *sfc;
   cairo_t *cr;
@@ -54,10 +63,18 @@ class Graphics{
 
     if (( dsp = XOpenDisplay(NULL)) == NULL)      exit(1);//window management X11, and cairo graphics
     int screen = DefaultScreen(dsp);
-    da = XCreateSimpleWindow(dsp, DefaultRootWindow(dsp), 0, 0, 2*Dim, Dim, 0, 0, 0);
+    if(STADE)
+   	da = XCreateSimpleWindow(dsp, DefaultRootWindow(dsp), 0, 0, 2*Dim, Dim, 0, 0, 0);
+    else
+   	da = XCreateSimpleWindow(dsp, DefaultRootWindow(dsp), 0, 0, Dim, Dim, 0, 0, 0);
     XMapWindow(dsp, da);
+    if(STADE){
     sfc = cairo_xlib_surface_create(dsp, da, DefaultVisual(dsp, screen), 2*Dim , Dim);
-    cairo_xlib_surface_set_size(sfc, 2*Dim, Dim);
+    cairo_xlib_surface_set_size(sfc, 2*Dim, Dim);}
+    else{
+    sfc = cairo_xlib_surface_create(dsp, da, DefaultVisual(dsp, screen), Dim , Dim);
+    cairo_xlib_surface_set_size(sfc, Dim, Dim);}
+    
     cr = cairo_create (sfc);
   } //empty window now on screen
 
