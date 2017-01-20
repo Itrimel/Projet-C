@@ -11,15 +11,7 @@
 #include <math.h>
 #include <time.h>
 
-#define STADIUM // mettre STADE pour le stade et NORMAL pour un boite carré
-
-#ifdef NORMAL
-const int STADE=0;
-#endif
-
-#ifdef STADIUM
-const int STADE=1;
-#endif
+#define STADE 1// mettre STADE à 1 pour le stade et 0 pour un boite carré
 
 typedef struct {
   double x,y,vx,vy;
