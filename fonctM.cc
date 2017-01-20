@@ -12,7 +12,7 @@ void update_pos(Particle *p,int Np,double tau)
 double update_vit(Event *e, int nm_e, Particle *p, double Lmax)
 //Cette fonction permet de mettre à jour la vitesse d'une particule, en fonction de l'évenement considéré, repéré par e et nm_e
 {
-	double x1,x2,y1,y2,vx1,vy1,vx2,vy2,inter,a,b,det;
+	double x,y,vx,vy,x1,x2,y1,y2,vx1,vy1,vx2,vy2,inter,a,b,det;
 	switch(e[nm_e].type)
 	{
 		case bottom:// dans le cas du choc contre le mur, il suffit d'inverser la bonne composante
@@ -20,29 +20,29 @@ double update_vit(Event *e, int nm_e, Particle *p, double Lmax)
 			p[nm_e].vy*=-1;
 			return p[nm_e].vy*p[nm_e].vy;
 		case left:
-			x1=p[nm_e].x;
-			y1=p[nm_e].y;
-			vx1=p[nm_e].vx;
-			vy1=p[nm_e].vy;
+			x=p[nm_e].x;
+			y=p[nm_e].y;
+			vx=p[nm_e].vx;
+			vy=p[nm_e].vy;
 			det=x*x+(y-Lmax/2)*(y-Lmax/2);
 			a=(vx*x+vy*(y-Lmax/2))/det;
-			b=(x*vy-vx(y-Lmax/2))/det;
+			b=(x*vy-vx*(y-Lmax/2))/det;
 			a=-a;
 			p[nm_e].vx=a*x-b*(y-Lmax/2);
 			p[nm_e].vy=a*(y-Lmax/2)+b*x;
-			return p[nm_e].vx*p[nm_e].vy;			
+			return a*a;			
 		case right:
-			x1=p[nm_e].x-Lmax;
-			y1=p[nm_e].y;
-			vx1=p[nm_e].vx;
-			vy1=p[nm_e].vy;
+			x=p[nm_e].x-Lmax;
+			y=p[nm_e].y;
+			vx=p[nm_e].vx;
+			vy=p[nm_e].vy;
 			det=x*x+(y-Lmax/2)*(y-Lmax/2);
 			a=(vx*x+vy*(y-Lmax/2))/det;
-			b=(x*vy-vx(y-Lmax/2))/det;
+			b=(x*vy-vx*(y-Lmax/2))/det;
 			a=-a;
 			p[nm_e].vx=a*x-b*(y-Lmax/2);
 			p[nm_e].vy=a*(y-Lmax/2)+b*x;
-			return p[nm_e].vx*p[nm_e].vy;
+			return a*a;
 		case particle:// Pour le choc entre 2 particules, l'évolution est moins évidente
 			x1=p[e[nm_e].ia].x; // On récupère toute les valeurs utiles
 			y1=p[e[nm_e].ia].y;
@@ -77,8 +77,10 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 			cas++;
 		if(vy>0)
 			cas+=10;
-		if(p[i].x>Lmax || p[i].x<0)
-			cas=3; 
+		if(p[i].x>Lmax)
+			cas=3;
+		else if(p[i].x<0)
+			cas=4;
 		switch(cas)/* Pour chaque cas, on regarde lequel des 2 murs la particule rencontre en premier, 
 							et on attribue alors le bon évenement et le bon temps*/
 		{
@@ -93,7 +95,7 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				else
 				{
-					e[i].time=cercle(p[i],Lmax,diameter);
+					e[i].time=cercle(p[i],Lmax,diameter,4);
 					e[i].ia=i;
 					e[i].type=left;
 				}
@@ -109,7 +111,7 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				else
 				{
-					e[i].time=time2;
+					e[i].time=cercle(p[i],Lmax,diameter,3);
 					e[i].ia=i;
 					e[i].type=right;
 				}
@@ -125,7 +127,7 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				else
 				{
-					e[i].time=cercle(p[i],Lmax,diameter);
+					e[i].time=cercle(p[i],Lmax,diameter,4);
 					e[i].ia=i;
 					e[i].type=left;
 				}
@@ -141,17 +143,21 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				else
 				{
-					e[i].time=time2;
+					e[i].time=cercle(p[i],Lmax,diameter,3);
 					e[i].ia=i;
 					e[i].type=right;
 				}
 				break;
-				case 3
-					e[i].time=cercle(p[i],Lmax,diameter);
-					e[i].ia=i;
-					e[i].type=(vx<0 ? left : right);
-					
-					
+			case 3:
+				e[i].time=cercle(p[i],Lmax,diameter,cas);
+				e[i].ia=i;
+				e[i].type= right;
+				break;
+			case 4:
+				e[i].time=cercle(p[i],Lmax,diameter,cas);
+				e[i].ia=i;
+				e[i].type=left;
+				break;	
 			}
 		if(i==0)/* Au début de la boucle for , on doit initialiser le temps minimum à la première valeur, 
 																						afin de ne pas avoir de problèmes*/
@@ -168,11 +174,11 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 	return e_min;// On retourne l'emplacement dans le tableau de l'événement arrivant le plus vite
 }
 		
-double cercle(Particle p, double Lmax, double diameter)
+double cercle(Particle p, double Lmax, double diameter,int cas)
 {
 	double x=p.x,y=p.y,vx=p.vx,vy=p.vy,a,b,c;
 	int i=(vx<0 ? 0 : 1);
-	if(vx>0)
+	if(cas==3)
 	{
 		a=vx*vx+vy*vy;
 		b=2*(vx*(x-Lmax)+vy*(y-Lmax/2));

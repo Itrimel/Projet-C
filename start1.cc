@@ -17,32 +17,17 @@ void initparticles( Particle *p, int np, double Lmin, double Lmax, double diamet
 
 int main()
 {
-	system("rm HISTO/*.dat"); // on suprime les fichers précédament crée
-	system("rm HISTO/*.jpeg");
-	system("rm HISTO/*.gif");
-	system("rm graph");
 
-	int i,Np=900,n_e_mur,n_e_col; //Number of particles
+
+	int i,Np=300,n_e_mur,n_e_col; //Number of particles
 	double diameter=0.5;//particle size
 	int Pix=500; //Number of pixels for window
 	double Lmax=20, Lmin=0,temps=0,tau1,tau2,temps_mur,delta=0.3,delta_temp=delta; //Physical dimensions of box or stadium
 	//Lmin DOIT RESTER A ZERO !!!!!
-	int count=0; // on compte le nombre d'affichage
-	double T=0, P=0, V=0; //variable qui mesure les constantes physiques
 
-	//Graphics gw(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
+	Graphics gw(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
 	srand48(time(NULL));//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
-  	double m = 3.14159*diameter*diameter; // on prend pour la masse la surface de la particule
-	double *normeV=allocdouble(Np); // on récupère trois tableau initialisé à zero pour tracer l'histograme des vitesse
-	double *compoVx=allocdouble(Np);
-	double *compoVy=allocdouble(Np);
-	int GO;
-
-	int l=0; // l gère le nombre de pas temporel que l'on fait
-
-	//printf("Pression\tTemperature !\n");
-	
-	FILE *fp=NULL;
+  	printf("Coucou !\n");
 	Particle *p= (Particle *) malloc( Np *sizeof( Particle)); //an array of particles
 	initparticles(p,Np,Lmin, Lmax,diameter); //place particles in box
 	Event *e_mur = (Event *) malloc( Np* sizeof(Event) );
@@ -51,8 +36,7 @@ int main()
 	Event *e_col = (Event *) malloc( Np*Np*sizeof(Event));
 	/*Ce tableau contiendra les événements collision entre particules, qui sont au nombre de Np(Np-1)/2
 	On prend un peu plus par sécurité*/
-	fp=fopen("graph","w");
-	if(e_mur==NULL || e_col==NULL || p ==NULL || fp==NULL)//Sécurité
+	if(e_mur==NULL || e_col==NULL || p ==NULL)//Sécurité
 	{
 		printf("Allocation mémoire échouée. Fin du programme\n");
 		free(p);
@@ -60,7 +44,8 @@ int main()
 		free(e_col);
 		return 0;
 	}
-	while(l<10000)
+	//for (int l=0; l<10000;l++)
+	while(1)
 	{
 
 		n_e_col=collision_part(p,e_col,Np,diameter);//On modifie les tableaux des événements physiques, celui des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envet le plus proche
@@ -71,30 +56,11 @@ int main()
 		//printf("%f\n",tau2);
 		if(delta_temp<tau2 && delta_temp<tau1)//Si la prochaine étape d'animation est plus proche que les 2 autres événements
 		{
-			printf("%d\n", l);
-			GO=0;
 			update_pos(p,Np,delta_temp);//On met à jour la position de toutes les particules et on affiche
-			//gw.draw(p);
+			gw.draw(p);
 			temps+=delta_temp;
 			delta_temp=delta;
-			//T=T+temperature(p, Np, m);
-			//P = V/(2*m*delta); // la pression est donné par P=V_perp.
-			if(l%30==0)
-			{ // on afficher pression et température moyenner sur 10 delta t
-				fprintf(fp,"%f\n",V/(2*m*30*delta));
-				//P=0;
-				//T=0;
-				V=0;
-				Lmax*=1.001;
-			}
-			/*//printf("GO= %d, l=%d\n", GO, l);
-			if(l==999) // on sauvegarde les données;
-				GO=1;
-			//if() // on se place à l'équilibre thermo
-			
-			//creathist(p, Np, normeV, compoVx, compoVy, GO);
-			// on reset la valeur de vitesse*/
-			l++;
+			Lmax*=1.0001;
 		}	
 		else if(tau1<tau2) // Si la collision entre particules est plus proche que le rebond sur mur
 		{
@@ -107,7 +73,7 @@ int main()
 		else //Le prochain événement est nécessairement un rebond à ce point
 		{
 			update_pos(p,Np,tau2);
-			V=V+update_vit(e_mur,n_e_mur,p,Lmax);
+			update_vit(e_mur,n_e_mur,p,Lmax);
 			temps+=tau2;
 			delta_temp-=tau2;
 		}

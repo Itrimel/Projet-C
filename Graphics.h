@@ -36,15 +36,16 @@ typedef struct
 class Graphics{
  private:
   int Np;
-  double lmin, lmax,Dim,diam;
+  double /*lmin, lmax,*/Dim,diam;
+  double *lmin, *lmax;
   cairo_surface_t *sfc;
   cairo_t *cr;
   Display *dsp;
   Drawable da;
  public:
-  Graphics(int N, int Pix, double dmin, double dmax,double diameter){
+  Graphics(int N, int Pix, double *dmin, double *dmax,double diameter){
     Np=N;
-    assert( dmin < dmax );
+    assert( *dmin < *dmax );
     assert(Np >0) ;
     lmin=dmin;
     lmax=dmax;
@@ -53,10 +54,10 @@ class Graphics{
 
     if (( dsp = XOpenDisplay(NULL)) == NULL)      exit(1);//window management X11, and cairo graphics
     int screen = DefaultScreen(dsp);
-    da = XCreateSimpleWindow(dsp, DefaultRootWindow(dsp), 0, 0, Dim, Dim, 0, 0, 0);
+    da = XCreateSimpleWindow(dsp, DefaultRootWindow(dsp), 0, 0, 2*Dim, Dim, 0, 0, 0);
     XMapWindow(dsp, da);
-    sfc = cairo_xlib_surface_create(dsp, da, DefaultVisual(dsp, screen), Dim , Dim);
-    cairo_xlib_surface_set_size(sfc, Dim, Dim);
+    sfc = cairo_xlib_surface_create(dsp, da, DefaultVisual(dsp, screen), 2*Dim , Dim);
+    cairo_xlib_surface_set_size(sfc, 2*Dim, Dim);
     cr = cairo_create (sfc);
   } //empty window now on screen
 
@@ -70,7 +71,7 @@ class Graphics{
   
   
   void draw(Particle*);//draw the particles
-  void frame(double , double , double , double );//draw a square
+  void frame(double , double , double , double);//draw a square or stadium
   ~Graphics(){cairo_destroy (cr);cairo_surface_destroy (sfc); } //clean up function
 };
 
@@ -78,5 +79,9 @@ class Graphics{
 // Prototypage des fonction
 void update_pos(Particle *p, int Np,double tau);
 int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax);
-double update_vit(Event *e, int nm_e, Particle *p);
+double update_vit(Event *e, int nm_e, Particle *p,double Lmax);
 int collision_part(Particle *p,Event *e_col,int Np,double diameter);
+double cercle(Particle p, double Lmax, double diameter,int cas);
+double* allocdouble(int Np);
+void creathist(Particle *p, int Np, double* normeV, double* compoVx, double* compoVy, int GO);
+double temperature(Particle *p, int Nb, double m);
