@@ -21,7 +21,7 @@ stade : $(STADIUM)
 	$(CXX)  $(STADIUM)  -L/opt/X11/lib -lcairo  -lX11 -o $@
 
 %_stade.o : %.cc Graphics.h
-	$(CXX) -c $*.cc -o $*_stade.o -Wall -Wshadow -O -I/opt/local/include -I/opt/X11/include  -D STADE=1 -D MESURE_TEMPS_VOL=0 -D LYAPUNOV=0  -D PT=0 -D DETADIA=0 -D HISTOGRAMME=0
+	$(CXX) -c $*.cc -o $*_stade.o $(CXXFLAGS)  -D STADE=1 -D MESURE_TEMPS_VOL=0 -D LYAPUNOV=0  -D PT=0 -D DETADIA=0 -D HISTOGRAMME=0
 
 #Faire la mesure des temps de vol
 VOL = start_vol.o graphics_vol.o fonctM_vol.o fonctC_vol.o
