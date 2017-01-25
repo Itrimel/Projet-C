@@ -1,39 +1,82 @@
-#http://clang.llvm.org/docs/AddressSanitizer.html
+NPART= -D N_PART=1
+LMAX = -D L_MAX=1000
+DIA = -D DIAMETER=0.5
+CXXFLAGS= -O -g -Wextra -Wall -Wshadow  -Wno-unused-variable -I/opt/local/include -I/opt/X11/include $(LMAX) $(NPART) $(DIA)
 
-CXXFLAGS= -O -g -Wextra -Wall -Wshadow   -fsanitize=address -Wno-unused-variable -I/opt/local/include -I/opt/X11/include
+all : simu_simple stade mesure_vol mesure_pt histogramme detente detente_stade
 
-all: start
+#Simulation sans aucun ajout
+INIT = start_0.o graphics_0.o fonctM_0.o fonctC_0.o
 
-start:start.o graphics.o Graphics.h fonctM.o fonctC.o
-	$(CXX) $(CXXFLAGS) graphics.o start.o fonctM.o fonctC.o -o $@  -L/opt/local/lib -lcairo  -L/opt/X11/lib  -lX11 -lm 
+simu_simple: $(INIT)
+	$(CXX) $(INIT) -L/opt/local/lib -g -L/opt/X11/lib -lcairo  -lX11 -o $@
 
+%_0.o : %.cc Graphics.h
+	$(CXX) -c $*.cc -o $*_0.o $(CXXFLAGS) -D STADE=0 -D MESURE_TEMPS_VOL=0 -D LYAPUNOV=0  -D PT=0 -D DETADIA=0 -D HISTOGRAMME=0
 
-hs.o: hs.cc Graphics.h
-start.o: start.cc Graphics.h
-graphics.o: Graphics.h graphics.cc
-fonctM.o : fonctM.cc Graphics.h
-fonctC.o: fonctC.cc Graphics.h
+#Faire le stade
+STADIUM = start_stade.o graphics_stade.o fonctM_stade.o fonctC_stade.o
 
-clean:
-	$(RM) *.o hs start
-clobber: clean
-	$(RM)  *.dat projet.tar start hs
+stade : $(STADIUM)
+	$(CXX)  $(STADIUM)  -L/opt/X11/lib -lcairo  -lX11 -o $@
 
+%_stade.o : %.cc Graphics.h
+	$(CXX) -c $*.cc -o $*_stade.o -Wall -Wshadow -O -I/opt/local/include -I/opt/X11/include  -D STADE=1 -D MESURE_TEMPS_VOL=0 -D LYAPUNOV=0  -D PT=0 -D DETADIA=0 -D HISTOGRAMME=0
 
-tar:
-	mkdir MD
-	cp Makefile graphics.cc Graphics.h start.cc MD/
-	tar cvfz MDprojet.tar MD 
-	scp MDprojet.tar acm@turner.pct.espci.fr:public_html/psa135/
-	$(RM) -r MD
+#Faire la mesure des temps de vol
+VOL = start_vol.o graphics_vol.o fonctM_vol.o fonctC_vol.o
 
-hs:hs.o graphics.o Graphics.h
-	$(CXX) $(CXXFLAGS) graphics.o hs.o -o $@  -L/opt/local/lib -lcairo  -L/opt/X11/lib  -lX11 -lm 
+mesure_vol : $(VOL)
+	$(CXX) $(VOL)  -L/opt/X11/lib -lcairo  -lX11 -o $@
+
+%_vol.o : %.cc Graphics.h
+	$(CXX) -c $*.cc -o $*_vol.o $(CXXFLAGS) -D STADE=0 -D MESURE_TEMPS_VOL=1 -D LYAPUNOV=0  -D PT=0 -D DETADIA=0 -D HISTOGRAMME=0
 	
+#Faire la mesure de la pression et de la température
+PR_TEMP = start_pt.o graphics_pt.o fonctM_pt.o fonctC_pt.o
 
-  
+mesure_pt : $(PR_TEMP)
+	$(CXX) $(PR_TEMP) -L/opt/X11/lib -lcairo  -lX11 -o $@
+
+%_pt.o : %.cc Graphics.h
+	$(CXX) -c $*.cc -o $*_pt.o $(CXXFLAGS) -D STADE=0 -D MESURE_TEMPS_VOL=0 -D LYAPUNOV=0  -D PT=1 -D DETADIA=0 -D HISTOGRAMME=0	
 	
-hstar:
-	mkdir Attract
-	cp Makefile *.cc *.h Attract
-	tar cvfz At.tar.gz Attract
+#Faire la mesure des vitesses sous forme d'histogramme
+HISTO = start_hist.o graphics_hist.o fonctM_hist.o fonctC_hist.o
+
+histogramme : $(HISTO)
+	$(CXX) $(HISTO)  -L/opt/X11/lib -lcairo  -lX11 -o $@
+
+%_hist.o : %.cc
+	$(CXX) -c $*.cc -o $*_hist.o $(CXXFLAGS) -D STADE=0 -D MESURE_TEMPS_VOL=1 -D LYAPUNOV=0  -D PT=0 -D DETADIA=0 -D HISTOGRAMME=1
+	
+#Activer la détente adiabatique : on pourra chercher à mesurer la pression en même temps en mettant PT à 1
+DET = start_det.o graphics_det.o fonctM_det.o fonctC_det.o
+
+detente : $(DET)
+	$(CXX) $(DET) -L/opt/X11/lib -lcairo  -lX11 -o $@
+
+%_det.o : %.cc Graphics.h
+	$(CXX) -c $*.cc -o $*_det.o $(CXXFLAGS) -D STADE=0 -D MESURE_TEMPS_VOL=0 -D LYAPUNOV=0  -D PT=0 -D DETADIA=1 -D HISTOGRAMME=0
+
+#Mesure de l'exposant de Lyapunov
+LYAP = start_lya.o graphics_lya.o fonctM_lya.o fonctC_lya.o
+
+simu_simple: $(LYAP)
+	$(CXX) $(LYAP) -L/opt/local/lib -g -L/opt/X11/lib -lcairo  -lX11 -o $@
+
+%_lya.o : %.cc Graphics.h
+	$(CXX) -c $*.cc -o $*_lya.o $(CXXFLAGS) -D STADE=0 -D MESURE_TEMPS_VOL=0 -D LYAPUNOV=1  -D PT=0 -D DETADIA=0 -D HISTOGRAMME=0
+
+
+#Compilation personnalisée : ici on va part exemple activer dans les flags -D le stade, la détente adiabatique et la mesure de la température et de la pression
+PERS = start_pers.o graphics_pers.o fonctM_pers.o fonctC_pers.o
+
+detente_stade : $(PERS)
+	$(CXX) $(PERS) -L/opt/X11/lib -lcairo  -lX11 -o $@
+
+%_pers.o : %.cc Graphics.h
+	$(CXX) -c $*.cc -o $*_pers.o $(CXXFLAGS) -D STADE=1 -D MESURE_TEMPS_VOL=0 -D LYAPUNOV=0  -D PT=1 -D DETADIA=1 -D HISTOGRAMME=0
+	
+	
+	
