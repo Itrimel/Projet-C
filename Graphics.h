@@ -10,12 +10,14 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <iostream>
 
-#define STADE 0// mettre STADE à 1 pour le stade et 0 pour un boite carré
+
+#define STADE 1 // mettre STADE pour le stade et NORMAL pour un boite carré
 
 typedef struct {
-  double x,y,vx,vy;
-} Particle; //this is our definition of  a particle, position plus speed
+  double x,y,vx,vy,time;
+} Particle; //this is our definition of  a particle, position plus speed, plus temps depuis dernière collision
 
 enum  col_type
 {
