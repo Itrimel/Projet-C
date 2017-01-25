@@ -1,3 +1,7 @@
+/*
+Ce header contient les inclues des librairies utiles au fonctionnement du programme, définit la classe graphics, les structures et les enums utile ainsi que le prototypage des fonctions
+Martel Caroff Janvier 2017
+*/
 // We use the casio graphics library
 // documentation: https://www.cairographics.org/manual/cairo-Paths.html
 #include <unistd.h>
@@ -11,9 +15,6 @@
 #include <math.h>
 #include <time.h>
 #include <iostream>
-
-
-#define STADE 1 // mettre STADE pour le stade et NORMAL pour un boite carré
 
 typedef struct {
   double x,y,vx,vy,time;
