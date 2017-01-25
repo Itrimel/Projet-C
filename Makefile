@@ -62,7 +62,7 @@ detente : $(DET)
 #Mesure de l'exposant de Lyapunov
 LYAP = start_lya.o graphics_lya.o fonctM_lya.o fonctC_lya.o
 
-simu_simple: $(LYAP)
+lyapunov: $(LYAP)
 	$(CXX) $(LYAP) -L/opt/local/lib -g -L/opt/X11/lib -lcairo  -lX11 -o $@
 
 %_lya.o : %.cc Graphics.h
