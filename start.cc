@@ -1,6 +1,6 @@
 /*
 Ce fichier est le ficher principal, il contient le main ainsi que des fonctions pour placer de manière aléatoire les particules.
-Dans le main on s'occupe de la gestion des événements, pour calculer l'exposant de Lyapunov on duplique le tableau avec la première particule dont la position change un tout petit peu.
+Dans le main on s'occupe de la gestion des événements, de l'animation et des mesures
  
 Martel Caroff Janvier 2017
 */
@@ -22,7 +22,7 @@ void initparticles( Particle *p, int np, double Lmin, double Lmax, double diamet
   	}
 }
 
-void initparticles_delta(Particle *p, Particle *p_delta, int np, double delta, double* epsi0) // on remplie la tableau dublique en changeant le premièr élément
+void initparticles_delta(Particle *p, Particle *p_delta, int np, double delta, double* epsi0) // on remplie la tableau dupliqué en changeant le premièr élément
 {
 	int i;
 	p_delta[0].x = p[0].x*(1+delta/100);
@@ -57,7 +57,8 @@ int main() // fonction principale du programme
 	double T=0, P=0, V=0; //variable qui mesure les constantes physiques
 
 	Graphics gw1(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
-	Graphics gw2(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
+	if(LYAPUNOV)
+		Graphics gw2(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
 	srand48(time(NULL));//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
   	
 	double m = 3.14159*diameter*diameter; // on prend pour la masse la surface de la particule
@@ -91,7 +92,7 @@ int main() // fonction principale du programme
 	}
 	initparticles(p,Np,Lmin, Lmax,diameter); //place particles in box
 
-	if(PT)
+	if(PT)// Si on mesure la pression, on ouvre un fichier pour y enregister les valeurs
 	{
 		fp=fopen("pression_temperature","w");
 		if (fp == NULL)
@@ -100,7 +101,7 @@ int main() // fonction principale du programme
 			return (-1);
 		}
 	}
-	if(LYAPUNOV) // on duplique les variables précédente mais avec la première  décaler de x%
+	if(LYAPUNOV) // on duplique les variables précédente mais avec la première  décalée de x%
 	{
 		fp=fopen("LYAPUNOV", "w");
 		p_delta= (Particle *) malloc(Np *sizeof(Particle)); //an array of particles
@@ -117,9 +118,9 @@ int main() // fonction principale du programme
 		epsn=epsi0;
 		fprintf(fp, "%f\n",epsn);
 	}
-	while(l<L_MAX)
+	while(l<L_MAX)// l est le compteur de boucle, on fera L_MAX (valeur mise en place dans le Makefile) passages
 	{
-		if(LYAPUNOV)
+		if(LYAPUNOV)// Si on veut calculer l'exposant de Lyapunov
 		{
 			n_e_col=collision_part(p,e_col,Np,diameter);//On modifie les tableaux des événements physiques, des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envoi le plus proche
 			n_e_mur=collision_mur(p,e_mur,Np,diameter,Lmax);
@@ -241,19 +242,19 @@ int main() // fonction principale du programme
 				update_pos(p,Np,delta_temp, Lmax, diameter);//On met à jour la position de toutes les particules et on affiche
 				gw1.draw(p);
 				temps+=delta_temp;
-				delta_temp=delta;
+				delta_temp=delta;// On remet à delta la valeur de temps avant prochaine animation
 				if(PT)
-					T=T+temperature(p, Np, m);
+					T=T+temperature(p, Np, m);//Si on mesure la température, on incrémente T afin de faire un moyennage
 				
-				if(l%30==0) // affiche tous les 30 L      /////////////// ICI pour gérer le moyennage de mesure
+				if(l%30==0) // affiche tous les 30 delta     /////////////// ICI pour gérer le moyennage de mesure
 				{ // on affiche pression et température moyennée sur un certain nombre de  delta t
 					if(PT)
 					{
-						fprintf(fp,"%f %f\n", T, V/(2*m*30*delta));
-						T=0;
+						fprintf(fp,"%f %f\n", T/30, V/(2*m*30*delta));
+						T=0;// On réinitialise les valeurs de T et V
 						V=0;
 					}
-					if (DETADIA)
+					if (DETADIA)// Si on fait la détente adiabatique, on augmente la taille de la boite tous les 30 delta
 						Lmax*=1.001; // on augmente la taille de la boite
 				}
 				if(HISTOGRAMME)
@@ -286,7 +287,7 @@ int main() // fonction principale du programme
 	free(p);// On libère les tableaux
 	free(e_mur);
 	free(e_col);
-	if(LYAPUNOV)
+	if(LYAPUNOV)//Si on fait Lyapunov, on doit libérer les tableau dupliqués
 	{
 		free(p_delta);
 		free(e_mur_delta);
