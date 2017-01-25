@@ -1,31 +1,36 @@
+/*
+Ce fichier de fonction contient la gestion de collision entre particule, une fonction pour obtenir la température, une fonction pour retourner des données pour la création d'un histogramme avec Matlab
+Martel Caroff Janvier 2017
+*/
+
 #include "Graphics.h"
 
-int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette fonction renvoi le temps min entre deux colision de particule
+int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette fonction renvoi le numéro de l'événement correspondant au temps min entre deux colision de particule et remplie le tableau d'évenement associer
 {
 	int i,y,count=0; // on va tester pour chaque particule si elle va croiser une autre
 	int num_t=0; // temps stocke le temps le plus faible et num_t la position correspondant 
 	double tmp; // variable poubelle
-	double temps=10E42;
-	double DVX, DVY, DX, DY, a, b, c, delta; // variable pour calculer le temps de colision
+	double temps=10e42;
+	double dvx, dvy, dx, dy, a, b, c, delta; // variable pour calculer le temps de colision
 	double t1, t2;
 
-	if(Np==1)
+	if(np==1)
 	{
 		e_col[0].time=10e42;
 		return 0;
 	}
-	for(i=0; i < Np; i++)
+	for(i=0; i < np; i++)
 	{
-		for(y=i+1; y<Np; y++)
+		for(y=i+1; y<np; y++)
 		{
-			DVX=p[i].vx-p[y].vx; // on recupère les valeurs 
-			DVY=p[i].vy-p[y].vy;// utile pour calculer les coef du polynome
-			DX=p[i].x-p[y].x;
-			DY=p[i].y-p[y].y;
+			dvx=p[i].vx-p[y].vx; // on recupère les valeurs 
+			dvy=p[i].vy-p[y].vy;// utile pour calculer les coef du polynome
+			dx=p[i].x-p[y].x;
+			dy=p[i].y-p[y].y;
 			
-			a=(DVX*DVX+DVY*DVY);
-			b=2*(DVX*DX+DVY*DY);
-			c=(DX*DX+DY*DY-diameter*diameter);
+			a=(dvx*dvx+dvy*dvy);
+			b=2*(dvx*dx+dvy*dy);
+			c=(dx*dx+dy*dy-diameter*diameter);
 			
 			delta=b*b-4*a*c;
 			if (delta < 0)
@@ -42,7 +47,6 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 				e_col[count].ib=y;
 				
 				t1=(-b-sqrt(delta))/(2*a);
-				//t2=(-b+sqrt(delta))/(2*a);
 				
 				if(t1>0)
 					tmp=t1;
@@ -62,36 +66,36 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 	return (num_t);
 }
 
-double temperature(Particle *p, int Nb, double m)
+double temperature(particle *p, int nb, double m)
 {
-	int i; // On a T = m<v^2>/Kb on prendra pour la masse la surface de la particule. 
-	double V=0;
-	for(i=0; i<Nb; i++)
+	int i; // on a t = m<v^2>/kb on prendra pour la masse la surface de la particule. 
+	double v=0;
+	for(i=0; i<nb; i++)
 	{
-		V=V+(p[i].vx*p[i].vx+p[i].vy*p[i].vy);
+		v=v+(p[i].vx*p[i].vx+p[i].vy*p[i].vy);
 	}
-	return (m*V/Nb);
+	return (m*v/nb);
 }
 
-void creathist(Particle *p, int Np, double* normeV, double* compoVx, double* compoVy, int GO) //le tableau comprend les valeurs qu'il faudra utiliser prendre pour crée l'histograme
+void creathist(particle *p, int np, double* normev, double* compovx, double* compovy, int go) //les tableaux comprend les valeurs qu'il faudra utiliser prendre pour crée l'histograme, les tableau sont créer dans le main.
 {	
 	static int count=0; // variable qui va stocker le nombre de fois ou on appelle la fonction pour faire la moyenne;
-	char NOMnorme[100];
-	char NOMVx[100];
-	char NOMVy[100];
+	char nomnorme[100];
+	char nomvx[100];
+	char nomvy[100];
 	
 	int j;
-	FILE* norme = NULL;
-	FILE* vx = NULL;
-	FILE* vy = NULL;
-	for (j=0; j<Np; j++)
+	file* norme = NULL;
+	file* vx = NULL;
+	file* vy = NULL;
+	for (j=0; j<np; j++)
 	{
-		normeV[j]=normeV[j]+(p[j].vx*p[j].vx+p[j].vy*p[j].vy);
-		compoVx[j]=compoVx[j]+p[j].vx;
-		compoVy[j]=compoVy[j]+p[j].vy;
+		normev[j]=normev[j]+(p[j].vx*p[j].vx+p[j].vy*p[j].vy);
+		compovx[j]=compovx[j]+p[j].vx;
+		compovy[j]=compovy[j]+p[j].vy;
 	}
 	
-	if(GO)
+	if(go)
 	{
 		snprintf(NOMnorme, sizeof(NOMnorme), "HISTO/norme.dat");
 		snprintf(NOMVx, sizeof(NOMVx), "HISTO/vx.dat");
@@ -103,7 +107,7 @@ void creathist(Particle *p, int Np, double* normeV, double* compoVx, double* com
 		
 		if (norme == NULL || vx == NULL || vy == NULL)
 		{
-			printf("TOCARD * 42 \n");
+			printf("Erreur création de fichier histogramme \n");
 			exit(42);
 		
 		}
@@ -126,7 +130,7 @@ double* allocdouble(int Np) // cette fonction crée un tableau de Nb double init
 	pouet = (double*)calloc(Np, sizeof(double));
 	if (pouet == NULL)
 	{
-		printf("Allocation fail\n");
+		printf("Allocation memoire tableau de double raté\n");
 		exit(-13);
 	}
 	return(pouet);

@@ -1,7 +1,8 @@
-//https:www.cairographics.org/manual/cairo-Paths.html
-
+/*
+Ce ficher de fonction regroupe les fonctions liés à l'affichage
+Martel Caroff Javier 2017
+*/
 #include "Graphics.h"
-#define LYAPUNOV 1
 void
 Graphics::draw(Particle *p){
   double v,LMAX=(*lmax)*1.5,LMIN=(*lmin)-(*lmax)/2;
@@ -23,7 +24,8 @@ else{
   cairo_push_group(cr); //start drawing
   cairo_set_source_rgb(cr, 0.0, 0.19, 0);//dark green background
   cairo_paint (cr); //clear screen with green
-if(LYAPUNOV)
+
+if(LYAPUNOV) // si on calcule le Lyapunov on affiche la première particule différement pour qu'elle soit visible
 {
   cairo_set_source_rgb(cr, 1, 0.0, 0);//dark red for particles
     cairo_new_sub_path(cr) ;
@@ -32,7 +34,8 @@ if(LYAPUNOV)
  else
     cairo_arc(cr,  alpha + gamma* (p[0].x -*lmin) ,  alpha + gamma*(p[0].y - *lmin), alpha, 0, 2 * M_PI);
       cairo_fill(cr);//draw all particles with solid colo
- }     
+ }
+      
   cairo_set_source_rgb(cr, 0.5, 0.5, 1);//dark red for particles
   for(int i=LYAPUNOV;i<Np;i++){// place the particles in the graphics buffer, without drawing
     cairo_new_sub_path(cr) ;
@@ -75,3 +78,4 @@ void Graphics::frame(double xmin, double xmax, double ymin, double ymax){
   		cairo_rectangle (cr,xmin, ymin, xmax-xmin, ymax-ymin); // draw rectangle
 	cairo_stroke (cr);
 }
+//https:www.cairographics.org/manual/cairo-Paths.html

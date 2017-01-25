@@ -1,19 +1,16 @@
+/*
+Ce fichier est le ficher principal, il contient le main ainsi que des fonctions pour placer de manière aléatoire les particules.
+Dans le main on s'occupe de la gestion des événements, pour calculer l'exposant de Lyapunov on duplique le tableau avec la première particule dont la position change un tout petit peu.
+ 
+Martel Caroff Janvier 2017
+*/
+
+
 #include "Graphics.h"  // Contains the definition of "Particule" and "Graphics"
 
-// pour choisir si on est en mode stade ou boite carré il faut aller dans Graphics.h
+#define ECART 0.1 // mettre en % le décalage voulu pour le calcul de Lyapunov
 
-#define LYAPUNOV 1 // mettre à 1 pour calculer l'exposant de Lyapunov.
-#define ECART 300 // mettre le décalage voulu pour le calcule de Lyapunov
-
-#define PT 0 // mettre à 1 pour crée un fichier relevant pression et température, ne fonctionne pas si LYAPUNOV = 1
-#define DETADIA 0// mettre à 1 pour voir la détente adiabatique, ne fonctionne pas avec Lyapu
-#define HISTOGRAMME 0// mettre à 1 pour tracer l'histogramme des vitesse, ne fonctionne pas avec Lyapu 
-
-#define L_MAX 1000 // nombre de pas temporelle que l'on réalise
-#define N_PART 12 // nombre de particule
-#define VERIF printf("OK\n");
-#define Z printf("Z\n");
-void initparticles( Particle *p, int np, double Lmin, double Lmax, double diameter)
+void initparticles( Particle *p, int np, double Lmin, double Lmax, double diameter)// On places les particules
 {
 	int i;
 	for( i=0;i<np;i++)
@@ -25,12 +22,10 @@ void initparticles( Particle *p, int np, double Lmin, double Lmax, double diamet
   	}
 }
 
-void initparticles_delta(Particle *p, Particle *p_delta, int np, double delta, double* epsi0) // on initialise tous les particules à un delta prés pour calculer l'exposant de Lyaponov.
+void initparticles_delta(Particle *p, Particle *p_delta, int np, double delta, double* epsi0) // on remplie la tableau dublique en changeant le premièr élément
 {
 	int i;
 	p_delta[0].x = p[0].x*(1+delta/100);
-	printf("%f \t %f\n", p_delta[0].x, p[0].x);
-	//while(1);
 	p_delta[0].y = p[0].y;
 	p_delta[0].vx = p[0].vx;	
 	p_delta[0].vy = p[0].vy;	
@@ -45,7 +40,7 @@ void initparticles_delta(Particle *p, Particle *p_delta, int np, double delta, d
   	}
 }
 
-int main()
+int main() // fonction principale du programme
 {
 	if (HISTOGRAMME)
 	{	
@@ -63,7 +58,7 @@ int main()
 
 	Graphics gw1(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
 	Graphics gw2(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
-	srand48(1);//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
+	srand48(time(NULL));//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
   	
 	double m = 3.14159*diameter*diameter; // on prend pour la masse la surface de la particule
 
@@ -124,7 +119,6 @@ int main()
 	}
 	while(l<L_MAX)
 	{
-		//printf("%d\n", l);
 		if(LYAPUNOV)
 		{
 			n_e_col=collision_part(p,e_col,Np,diameter);//On modifie les tableaux des événements physiques, des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envoi le plus proche
@@ -206,6 +200,7 @@ int main()
 					update_pos(p,Np,tau2+shift_t_normal, Lmax, diameter);
 					update_vit(e_mur,n_e_mur,p,Lmax);
 					temps+=tau2;
+		//printf("%d\n", l);
 					delta_temp-=tau2;
 					shift_t_delta+=tau2;
 					shift_t_normal=0;
@@ -236,6 +231,7 @@ int main()
 		else // cas ou on ne calcule pas l'exposant
 		{
 			n_e_col=collision_part(p,e_col,Np,diameter);//On modifie les tableaux des événements physiques, des collisions et celui des rebonds, on recupère dans n_e le numéro de l'envet le plus proche
+		//printf("%d\n", l);
 			n_e_mur=collision_mur(p,e_mur,Np,diameter,Lmax);
 			tau1=e_col[n_e_col].time;// On récupère les temps des événements physiques
 			tau2=e_mur[n_e_mur].time;

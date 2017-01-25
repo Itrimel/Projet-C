@@ -9,14 +9,22 @@ MARTEL Théo		CAROFF Théo		Janvier 2017*/
 //mettre à 1 pour afficher dans le terminal les valeurs des temps et distances de vol à chaque collision réalisée. 
 //Cette option est contrôlée dans le Makefile
 
-void update_pos(Particle *p,int Np,double tau)
+void update_pos(Particle *p,int Np,double tau, double Lmax, double diameter)
 //Cette fonction permet de mettre à jour les positions de toutes les particules, en fonction de la valeur de temps donnée
 {
 	int i;
 	for(i=0;i<Np;i++)
 	{
 		p[i].x=p[i].x+p[i].vx*tau;
+		if(p[i].x <=0+diameter/2)
+			p[i].x=diameter/2+1.e-14;
+		if(p[i].x >= Lmax-diameter/2)
+			p[i].x=Lmax-diameter/2-1.e-14;
 		p[i].y=p[i].y+p[i].vy*tau;
+		if(p[i].y <=0+diameter/2)
+			p[i].y=diameter/2+1.e-14;
+		if(p[i].y >= Lmax-diameter/2)
+			p[i].y=Lmax-diameter/2-1.e-14;
 		if(MESURE_TEMPS_VOL)
 			p[i].time+=tau;
 	}
