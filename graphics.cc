@@ -1,7 +1,7 @@
 //https:www.cairographics.org/manual/cairo-Paths.html
 
 #include "Graphics.h"
-
+#define LYAPUNOV 1
 void
 Graphics::draw(Particle *p){
   double v,LMAX=(*lmax)*1.5,LMIN=(*lmin)-(*lmax)/2;
@@ -23,10 +23,18 @@ else{
   cairo_push_group(cr); //start drawing
   cairo_set_source_rgb(cr, 0.0, 0.19, 0);//dark green background
   cairo_paint (cr); //clear screen with green
-
+if(LYAPUNOV)
+{
+  cairo_set_source_rgb(cr, 1, 0.0, 0);//dark red for particles
+    cairo_new_sub_path(cr) ;
+ if(STADE)
+    cairo_arc(cr,  p[0].x*(alpha-Dim)/(2*LMIN) +(alpha+Dim)/2 ,  alpha/2 + p[0].y*(Dim-alpha)/(-2*LMIN), 2*alpha, 0, 2 * M_PI);
+ else
+    cairo_arc(cr,  alpha + gamma* (p[0].x -*lmin) ,  alpha + gamma*(p[0].y - *lmin), alpha, 0, 2 * M_PI);
+      cairo_fill(cr);//draw all particles with solid colo
+ }     
   cairo_set_source_rgb(cr, 0.5, 0.5, 1);//dark red for particles
-  for(int i=0;i<Np;i++){// place the particles in the graphics buffer, without drawing
-  	v=(double)i/Np;
+  for(int i=LYAPUNOV;i<Np;i++){// place the particles in the graphics buffer, without drawing
     cairo_new_sub_path(cr) ;
 if(STADE)
     cairo_arc(cr,  p[i].x*(alpha-Dim)/(2*LMIN) +(alpha+Dim)/2 ,  alpha/2 + p[i].y*(Dim-alpha)/(-2*LMIN), 2*alpha, 0, 2 * M_PI);

@@ -11,7 +11,7 @@
 #include <math.h>
 #include <time.h>
 
-#define STADE 1// mettre STADE à 1 pour le stade et 0 pour un boite carré
+#define STADE 0// mettre STADE à 1 pour le stade et 0 pour un boite carré
 
 typedef struct {
   double x,y,vx,vy;
@@ -85,7 +85,7 @@ class Graphics{
 
 
 // Prototypage des fonction
-void update_pos(Particle *p, int Np,double tau);
+void update_pos(Particle *p, int Np,double tau, double Lmax, double diameter);
 int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax);
 double update_vit(Event *e, int nm_e, Particle *p,double Lmax);
 int collision_part(Particle *p,Event *e_col,int Np,double diameter);
