@@ -72,7 +72,7 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 {
 	// Utilise la géométrie carrée (x et y compris entre 0 et Lmax) pour voir les chocs contre les murs
 	int i,cas,e_min;
-	double time1,time2,time_min,vx,vy;
+	double time1,time2,time3,time_min,vx,vy;
 	for(i=0;i<Np;i++)
 	{
 		cas=0;/* On regarde dans quelle direction la particule se déplace : 00 signifie vers bas gauche, 01 signifie
@@ -83,10 +83,13 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 			cas++;
 		if(vy>0)
 			cas+=10;
-		if(p[i].x>Lmax)
-			cas=3;
-		else if(p[i].x<0)
-			cas=4;
+		if(STADE)
+		{
+			if(p[i].x>Lmax)
+				cas=3;
+			else if(p[i].x<0)
+				cas=4;
+		}
 		switch(cas)/* Pour chaque cas, on regarde lequel des 2 murs la particule rencontre en premier, 
 							et on attribue alors le bon évenement et le bon temps*/
 		{
@@ -167,14 +170,68 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 				}
 				break;
 			case 3:
-				e[i].time=cercle(p[i],Lmax,diameter,cas);
-				e[i].ia=i;
-				e[i].type= right;
+				if(cercle(p[i],Lmax,diameter,cas)*vx+p[i].x>Lmax)//Si la boule se dirige bien vers le bord du cercle (choc contre la bonne partie du cercle)
+				{
+					e[i].time=cercle(p[i],Lmax,diameter,cas);
+					e[i].ia=i;
+					e[i].type=right;
+				}
+				else// Sinon on regarde les autres cas
+				{
+					time1=((Lmax-p[i].y-diameter/2)/vy>0 ? (Lmax-p[i].y-diameter/2)/vy : 10e42);//temps avant collision sur mur du haut
+					time2=(-(p[i].y-diameter/2)/vy>0 ? -(p[i].y-diameter/2)/vy : 10e42);//temps avant collisison sur mur du bas
+					time3=(-(p[i].x-diameter/2)/vx>0 ? -(p[i].x-diameter/2)/vx : 10e42);//temps avant de rentrer dans l'autre arc de cercle
+					if(time1<time2 && time1<time3)
+					{
+						e[i].time=time1;
+						e[i].ia=i;
+						e[i].type=top;
+					}
+					else if(time2<time3)
+					{
+						e[i].time=time2;
+						e[i].ia=i;
+						e[i].type=bottom;
+					}
+					else
+					{
+						e[i].time=cercle(p[i],Lmax,diameter,4);
+						e[i].ia=i;
+						e[i].type=left;
+					}
+				}
 				break;
 			case 4:
-				e[i].time=cercle(p[i],Lmax,diameter,cas);
-				e[i].ia=i;
-				e[i].type=left;
+				if(cercle(p[i],Lmax,diameter,cas)*vx+p[i].x<0)//Si la boule se dirige bien vers le bord du cercle (choc contre la bonne partie du cercle)
+				{
+					e[i].time=cercle(p[i],Lmax,diameter,cas);
+					e[i].ia=i;
+					e[i].type=left;
+				}
+				else// Sinon on regarde les autres cas
+				{
+					time1=((Lmax-p[i].y-diameter/2)/vy>0 ? (Lmax-p[i].y-diameter/2)/vy : 10e42);//temps avant collision sur mur du haut
+					time2=(-(p[i].y-diameter/2)/vy>0 ? -(p[i].y-diameter/2)/vy : 10e42);//temps avant collisison sur mur du bas
+					time3=((Lmax-p[i].x-diameter/2)/vx>0 ? (Lmax-p[i].x-diameter/2)/vx : 10e42);//temps avant de rentrer dans l'autre arc de cercle
+					if(time1<time2 && time1<time3)
+					{
+						e[i].time=time1;
+						e[i].ia=i;
+						e[i].type=top;
+					}
+					else if(time2<time3)
+					{
+						e[i].time=time2;
+						e[i].ia=i;
+						e[i].type=bottom;
+					}
+					else
+					{
+						e[i].time=cercle(p[i],Lmax,diameter,3);
+						e[i].ia=i;
+						e[i].type=right;
+					}
+				}
 				break;	
 			}
 		if(i==0)/* Au début de la boucle for , on doit initialiser le temps minimum à la première valeur, 
@@ -195,7 +252,6 @@ int collision_mur(Particle *p,Event *e,int Np, double diameter, double Lmax)
 double cercle(Particle p, double Lmax, double diameter,int cas)
 {
 	double x=p.x,y=p.y,vx=p.vx,vy=p.vy,a,b,c;
-	int i=(vx<0 ? 0 : 1);
 	if(cas==3)
 	{
 		a=vx*vx+vy*vy;
@@ -207,7 +263,7 @@ double cercle(Particle p, double Lmax, double diameter,int cas)
 		a=vx*vx+vy*vy;
 		b=2*(vx*x+vy*(y-Lmax/2));
 		c=x*x+(y-Lmax/2)*(y-Lmax/2)-(Lmax-diameter)*(Lmax-diameter)/4;
-	}	
+	}
 	return (-b+sqrt(b*b-4*a*c))/(2*a);	
 }
 
