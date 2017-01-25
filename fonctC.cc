@@ -28,12 +28,12 @@ int collision_part(Particle *p, Event *e_col,int np, double diameter)  // cette 
 			dx=p[i].x-p[y].x;
 			dy=p[i].y-p[y].y;
 			
-			a=(dvx*dvx+dvy*dvy);
+			a=(dvx*dvx+dvy*dvy);// On calcule les coeffs de l'équation
 			b=2*(dvx*dx+dvy*dy);
 			c=(dx*dx+dy*dy-diameter*diameter);
 			
 			delta=b*b-4*a*c;
-			if (delta < 0)
+			if (delta < 0)// Si il n'y a aucune solution
 			{
 				e_col[count].type=particle;
 				e_col[count].ia=i;
@@ -46,7 +46,7 @@ int collision_part(Particle *p, Event *e_col,int np, double diameter)  // cette 
 				e_col[count].ia=i;
 				e_col[count].ib=y;
 				
-				t1=(-b-sqrt(delta))/(2*a);
+				t1=(-b-sqrt(delta))/(2*a);// la seule solution intéressante est celle là, il faut qu'elle soit positive
 				
 				if(t1>0)
 					tmp=t1;
@@ -54,7 +54,7 @@ int collision_part(Particle *p, Event *e_col,int np, double diameter)  // cette 
 					tmp=10e42;
 				
 				e_col[count].time=tmp;
-				if (temps > tmp)
+				if (temps > tmp)// Si l'événement crée est le plus proche dans le temps, il devient l'événement qui sera retourné
 				{
 					temps=tmp;
 					num_t=count;	
@@ -88,14 +88,14 @@ void creathist(Particle *p, int np, double* normev, double* compoVx, double* com
 	FILE* norme = NULL;
 	FILE* vx = NULL;
 	FILE* vy = NULL;
-	for (j=0; j<np; j++)
+	for (j=0; j<np; j++)// On mo
 	{
 		normev[j]=normev[j]+(p[j].vx*p[j].vx+p[j].vy*p[j].vy);
 		compoVx[j]=compoVx[j]+p[j].vx;
 		compoVy[j]=compoVy[j]+p[j].vy;
 	}
 	
-	if(go)
+	if(go)// Si on enregistre les histogrammes
 	{
 		snprintf(NOMnorme, sizeof(NOMnorme), "HISTO/norme.dat");
 		snprintf(NOMVx, sizeof(NOMVx), "HISTO/vx.dat");

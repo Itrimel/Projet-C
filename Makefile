@@ -1,5 +1,5 @@
-NPART= -D N_PART=1
-LMAX = -D L_MAX=1000
+NPART= -D N_PART=100
+LMAX = -D L_MAX=10000
 DIA = -D DIAMETER=0.5
 CXXFLAGS= -O -g -Wextra -Wall -Wshadow  -Wno-unused-variable -I/opt/local/include -I/opt/X11/include $(LMAX) $(NPART) $(DIA)
 
@@ -8,7 +8,7 @@ all : simu_simple stade mesure_vol mesure_pt histogramme detente detente_stade l
 #STADE=1 permet de choisir le stade
 #MESURE_TEMPS_VOL=1 permet de retourner dans le terminal les temps de vol libre des particules
 #LYAPUNOV=1 permet de mesurer l'exposant de Lyapunov du sytème considéré
-#PT=1 permet de retourner dans le terminal les valeurs de pression et température
+#PT=1 permet de retourner dans un fichier les valeurs de pression et température
 #DETADIA=1 permet de mettre en place la détente adiabatique
 #HISTOGRAMME=1 permet de mesurer les vitesse sous forme d'histogramme
 

@@ -56,9 +56,8 @@ int main() // fonction principale du programme
 	int count=0, eq=0; // on compte le nombre d'affichage et le nombre de collision entre particule pour savoir si on est à l'équlibre
 	double T=0, P=0, V=0; //variable qui mesure les constantes physiques
 
+	Graphics gw2(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
 	Graphics gw1(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
-	if(LYAPUNOV)
-		Graphics gw2(Np,Pix, &Lmin ,&Lmax,diameter);// Open a window to plot particles in
 	srand48(time(NULL));//inititalize random numbers -- to find always the same value // you can replace "1" by time(NULL) 
   	
 	double m = 3.14159*diameter*diameter; // on prend pour la masse la surface de la particule
@@ -95,6 +94,7 @@ int main() // fonction principale du programme
 	if(PT)// Si on mesure la pression, on ouvre un fichier pour y enregister les valeurs
 	{
 		fp=fopen("pression_temperature","w");
+		fprintf(fp,"Température\tPression\n");
 		if (fp == NULL)
 		{
 			printf("creation/acces fichier echouer\n");
@@ -246,7 +246,7 @@ int main() // fonction principale du programme
 				if(PT)
 					T=T+temperature(p, Np, m);//Si on mesure la température, on incrémente T afin de faire un moyennage
 				
-				if(l%30==0) // affiche tous les 30 delta     /////////////// ICI pour gérer le moyennage de mesure
+				if(l%30==0 && l!=0) // affiche tous les 30 delta     /////////////// ICI pour gérer le moyennage de mesure
 				{ // on affiche pression et température moyennée sur un certain nombre de  delta t
 					if(PT)
 					{
