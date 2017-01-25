@@ -5,7 +5,7 @@ Martel Caroff Janvier 2017
 
 #include "Graphics.h"
 
-int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette fonction renvoi le numéro de l'événement correspondant au temps min entre deux colision de particule et remplie le tableau d'évenement associer
+int collision_part(Particle *p, Event *e_col,int np, double diameter)  // cette fonction renvoi le numéro de l'événement correspondant au temps min entre deux colision de particule et remplie le tableau d'évenement associer
 {
 	int i,y,count=0; // on va tester pour chaque particule si elle va croiser une autre
 	int num_t=0; // temps stocke le temps le plus faible et num_t la position correspondant 
@@ -66,7 +66,7 @@ int collision_part(Particle *p, Event *e_col,int Np, double diameter)  // cette 
 	return (num_t);
 }
 
-double temperature(particle *p, int nb, double m)
+double temperature(Particle *p, int nb, double m)
 {
 	int i; // on a t = m<v^2>/kb on prendra pour la masse la surface de la particule. 
 	double v=0;
@@ -77,22 +77,22 @@ double temperature(particle *p, int nb, double m)
 	return (m*v/nb);
 }
 
-void creathist(particle *p, int np, double* normev, double* compovx, double* compovy, int go) //les tableaux comprend les valeurs qu'il faudra utiliser prendre pour crée l'histograme, les tableau sont créer dans le main.
+void creathist(Particle *p, int np, double* normev, double* compoVx, double* compoVy, int go) //les tableaux comprend les valeurs qu'il faudra utiliser prendre pour crée l'histograme, les tableau sont créer dans le main.
 {	
 	static int count=0; // variable qui va stocker le nombre de fois ou on appelle la fonction pour faire la moyenne;
-	char nomnorme[100];
-	char nomvx[100];
-	char nomvy[100];
+	char NOMnorme[100];
+	char NOMVx[100];
+	char NOMVy[100];
 	
 	int j;
-	file* norme = NULL;
-	file* vx = NULL;
-	file* vy = NULL;
+	FILE* norme = NULL;
+	FILE* vx = NULL;
+	FILE* vy = NULL;
 	for (j=0; j<np; j++)
 	{
 		normev[j]=normev[j]+(p[j].vx*p[j].vx+p[j].vy*p[j].vy);
-		compovx[j]=compovx[j]+p[j].vx;
-		compovy[j]=compovy[j]+p[j].vy;
+		compoVx[j]=compoVx[j]+p[j].vx;
+		compoVy[j]=compoVy[j]+p[j].vy;
 	}
 	
 	if(go)
@@ -111,9 +111,9 @@ void creathist(particle *p, int np, double* normev, double* compovx, double* com
 			exit(42);
 		
 		}
-		for (j=0; j<Np; j++)
+		for (j=0; j<np; j++)
 		{
-			fprintf(norme, "%f\n", normeV[j]/count);
+			fprintf(norme, "%f\n", normev[j]/count);
 			fprintf(vx, "%f\n", compoVx[j]/count);
 			fprintf(vy, "%f\n", compoVy[j]/count);
 		}
