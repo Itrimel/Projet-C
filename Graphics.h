@@ -12,6 +12,7 @@
 #include <time.h>
 #include <iostream>
 
+
 #define STADE 1 // mettre STADE pour le stade et NORMAL pour un boite carré
 
 
